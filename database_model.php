@@ -64,7 +64,6 @@ class Database {
                 $temp_array = array($row);
                 foreach($row as $row_columns_key => $col_val) {
                     if (in_array($row_columns_key, $ac_arr)) {
-                        echo "yes" . $row_columns_key;
                         unset($row[$row_columns_key]);
                     }
                 }
