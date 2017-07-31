@@ -5,6 +5,7 @@
     <i class="fa fa-home w3-xxlarge"></i>
     <p>HOME</p>
   </a>
+  <!--
   <a href="#about" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
     <i class="fa fa-user w3-xxlarge"></i>
     <p>ABOUT</p>
@@ -12,7 +13,7 @@
   <a href="#contact" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
     <i class="fa fa-envelope w3-xxlarge"></i>
     <p>CONTACT</p>
-  </a>
+  </a> -->
   <a href='students.php'>
   	<p>STUDENTS</p>
   </a>
@@ -31,7 +32,7 @@
   <a href='users.php'>
   <p>MANAGE USERS</p>
   </a>
-  <a href='login.php'>
+  <a href='index.php'>
   	<p></p>
 	<p>LOGOUT</p>
   </a>

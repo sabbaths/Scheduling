@@ -8,7 +8,7 @@
 <body>
 
 <form action="home.php" class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin">
-<h1 class="w3-center">WCC SCHEDULING</h2>
+<h1 class="w3-center">FLIGHT SCHEDULE</h2>
  
 <div class="w3-row w3-section">
   <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-user"></i></div>

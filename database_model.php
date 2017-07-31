@@ -7,9 +7,6 @@ class Database {
     private static $password = "password";
     private static $database = "wcc_scheduling"; //apgiaa godaddy.com
 //put your code here
-    function brk() {
-        echo "</br>";
-    }
 
     function setEnvironment($environment = 1) {
         if($environment == 1) { //dev
@@ -39,24 +36,144 @@ class Database {
 
     function getSchedules($schedule_date) {
         $schedule_date_arr = array();
-        $sql = "SELECT s.slot_time, st.*
+        $ac_arr = array();
+
+        $sql = "SELECT s.slot_time, s.slot_id, st.*
                 FROM wcc_scheduling.schedule_test st
                 RIGHT JOIN slots s ON st.slot = s.slot_id 
-                    AND st.date = '" . $schedule_date . "'";
+                    AND st.date = '" . $schedule_date . "' ORDER BY s.slot_id";
+
+        $sql_get_not_active_ac = "
+            SELECT registration
+            FROM aircraft
+            WHERE is_active = 0";
 
         $result = self::$connection->query($sql);   
+        $result_ac = self::$connection->query($sql_get_not_active_ac);   
+
+        
+        if ($result_ac->num_rows > 0) {
+            while($row = $result_ac->fetch_assoc()) {
+                array_push($ac_arr ,$row['registration']);
+            }  
+        }
+        //print_r($ac_arr);
 
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
                 $temp_array = array($row);
+                foreach($row as $row_columns_key => $col_val) {
+                    if (in_array($row_columns_key, $ac_arr)) {
+                        //echo "yes" . $row_columns_key;
+                        unset($row[$row_columns_key]);
+                    }
+                }
                 array_push($schedule_date_arr ,$row);
             }  
-        } else {
-            echo "wala";
         }
-        //print_r($courses_arr);
+        //print_r($schedule_date_arr);
         
         return $schedule_date_arr;       
+    }
+
+    function aircraftHandler($mode, $aircraft_id, $is_active) {
+
+        if($mode == 'edit') {
+            $sql_update_aircraft = "
+                UPDATE aircraft
+                SET is_active = $is_active
+                WHERE aircraft_id = $aircraft_id";
+
+                
+                if (self::$connection->query($sql_update_aircraft) === TRUE) {
+                    return 7001; //good
+                } else {
+                    return 7002; //bad
+                }             
+        } else {
+            return 7003;
+        }
+    }
+
+    function createEditSchedule($slot_id, $instructor_id, $student_id, $aircrat_id, $date_flight, $purpose_id) {
+        $sql_insert_schedule_details = " INSERT INTO schedule_test_ins 
+                (instructor, student, purpose) 
+                VALUES ( 
+                '".$instructor_id."', 
+                '".$student_id."',
+                '".$purpose_id."')";
+
+        $sql_check_schedule = "SELECT * FROM schedule_test WHERE slot = $slot_id
+                AND date = '$date_flight'";
+        
+        echo $sql_check_schedule;
+        if (self::$connection->query($sql_insert_schedule_details) === TRUE) {
+            $inserted_sched_detail_id = mysqli_insert_id(self::$connection);
+
+            //check if there is a schedule
+            $result = self::$connection->query($sql_check_schedule); 
+
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $schedule_id = $row['schedule_id'];
+                $sql_update_schedule = "
+                    UPDATE schedule_test 
+                    SET `$aircrat_id`= $inserted_sched_detail_id
+                    WHERE date = '$date_flight'
+                        AND schedule_id = $schedule_id";
+                if (self::$connection->query($sql_update_schedule) === TRUE) {
+                    return 5012; //good
+                } else {
+                    return 5042;
+                } 
+            } else {
+                $sql_insert_schedule = " 
+                    INSERT INTO schedule_test
+                    (date, slot, `$aircrat_id`) 
+                    VALUES ( 
+                    '".$date_flight."', 
+                    '".$slot_id."',
+                    '".$inserted_sched_detail_id."')";
+                echo $sql_insert_schedule;
+
+                if (self::$connection->query($sql_insert_schedule) === TRUE) {
+                    return 5011; //good
+                } else {
+                    return 5044;
+                } 
+            }
+        } else {   
+            return 5004; //error
+        }    
+    }
+
+    function cancelFlightSchedule($slot_id, $instructor_id, $student_id, $aircrat_id, $date_flight, $purpose_id) {
+
+        $sql_check_schedule = "SELECT * FROM schedule_test WHERE slot = $slot_id
+                AND date = '$date_flight'
+                AND `$aircrat_id` IS NOT NULL";
+        
+        //echo $sql_check_schedule;
+        //check if there is a schedule
+        
+        $result = self::$connection->query($sql_check_schedule);//check if there is a schedule 
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $schedule_id = $row['schedule_id'];
+            $sql_update_schedule = "
+                UPDATE schedule_test 
+                SET `$aircrat_id`= 'CANCELLED'
+                WHERE date = '$date_flight'
+                    AND schedule_id = $schedule_id";
+            //return $sql_update_schedule;       
+            if (self::$connection->query($sql_update_schedule) === TRUE) {
+                return 6012; //good
+            } else {
+                return 6042;
+            }
+        } else {
+            return 6013;
+        }
     }
 
     function getStudents() {
@@ -77,6 +194,23 @@ class Database {
         //print_r($courses_arr);
         
         return $students_arr;       
+    }
+
+    function getPurpose() {
+        $purpose_arr = array();
+        $sql = "SELECT * FROM flight_purpose;";
+        $result = self::$connection->query($sql);   
+
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $purpose_id = $row["purpose_id"];
+                $purpose = $row["purpose"];
+                $temp_array = array($purpose_id, $purpose);
+                array_push($purpose_arr ,$temp_array);
+            }  
+        }
+        
+        return $purpose_arr;       
     }
 
     function getInstructors() {
@@ -126,7 +260,9 @@ class Database {
             while($row = $result->fetch_assoc()) {
                 $aircraft_id = $row["aircraft_id"];
                 $registration = $row["registration"];
-                $temp_array = array($aircraft_id, $registration);
+                $is_active = $row["is_active"];
+                $bew = $row["bew"];
+                $temp_array = array($aircraft_id, $registration, $is_active, $bew);
                 array_push($students_arr ,$temp_array);
             }  
         }
@@ -140,7 +276,7 @@ class Database {
             SELECT 
                 CONCAT(i.first_name, ' ',i.last_name) AS instructor, 
                 CONCAT(s.first_name, ' ',s.last_name) AS student, 
-                p.purpose
+                p.purpose, p.purpose_id as purpose_id, s.student_id as student_id, i.id as instructor_id
             FROM wcc_scheduling.schedule_test_ins sti
             INNER JOIN instructors i ON i.id = sti.instructor
             INNER JOIN students s ON s. student_id =  sti.student
@@ -217,67 +353,6 @@ class Database {
         
     }
     
-    function getCourses() {
-        $courses_arr = array();
-        $sql = "SELECT course_id, course_code, course_name FROM course;";
-        $result = self::$connection->query($sql);   
-
-        if ($result->num_rows > 0) {
-            while($row = $result->fetch_assoc()) {
-                $course_id = $row["course_id"];
-                $course_name = $row["course_code"];
-                $course_code = $row["course_name"];
-                $temp_array = array($course_id, $course_code, $course_name);
-                array_push($courses_arr ,$temp_array);
-            }  
-        }
-        //print_r($courses_arr);
-        
-        return $courses_arr;
-    }
-    
-    function getSubjects($course_id = "") {
-        $subj_arr = array();
-        $where = !empty($course_id) ? "WHERE course_id = $course_id " : "";
-        $sql = "SELECT subject_id, subject_code, subject_name, time_limit FROM subjects $where ;";
-        $result = self::$connection->query($sql);   
-
-        if ($result->num_rows > 0) {
-            while($row = $result->fetch_assoc()) {
-                $subj_id = $row["subject_id"];
-                $subject_code = $row["subject_code"];
-                $subj_name = $row["subject_name"];
-                $subj_time_limit = $row["time_limit"];
-                $temp_array = array($subj_id, $subject_code, $subj_name, $subj_time_limit);
-                array_push($subj_arr ,$temp_array);
-            }  
-        }
-        //print_r($courses_arr);
-        
-        return $subj_arr;       
-    }
-    
-    function getGI() {
-        $instructors_arr = array();
-        $sql = "SELECT id, IFNULL(first_name, '') as first_name, IFNULL(middle_name, '') as middle_name, 
-            IFNULL(last_name, '') as last_name FROM instructors;";
-        $result = self::$connection->query($sql);   
-
-        if ($result->num_rows > 0) {
-            while($row = $result->fetch_assoc()) {
-                $id = $row["id"];
-                $first_name = $row["first_name"];
-                $middle_name = $row["middle_name"];
-                $last_name = $row["last_name"];
-                $temp_array = array($id, $first_name, $middle_name, $last_name);
-                array_push($instructors_arr ,$temp_array);
-            }  
-        }
-        //print_r($courses_arr);
-        
-        return $instructors_arr;   
-    }
-    
     function getStudentsOld() {
         $students_arr = array();
         $sql = "SELECT student_id, first_name, middle_name, last_name FROM students;";
@@ -298,196 +373,7 @@ class Database {
         return $students_arr;       
     }
     
-    function generateExam($course_id, $subject_id, $student_id, $instructor_id, $user_id = 1) {
-        $sql_insert_new_exam = " INSERT INTO student_exams(student_id, examiner_id,instructor_id, course_id, subject_id)"
-              . "VALUES($student_id, $user_id, $instructor_id, $course_id, $subject_id)";
-       
-       $sql_question_count = "
-            SELECT COUNT(*) number_of_questions
-            FROM questions 
-            WHERE subject_id = $subject_id "; 
 
-         $result_question_count =  self::$connection->query($sql_question_count);
-         $how_many_questions = $result_question_count->fetch_array()[0]; 
-         
-        if($how_many_questions < 30) {
-            return ["status_code" => 3003]; //no questions available
-        }       
-
-        $sql_is_still_doing_exam = "
-            SELECT student_exam_id
-            FROM student_exams
-            WHERE subject_id = $subject_id
-                AND is_done = 0
-                AND student_id = $student_id ";
-
-        //check if still doing exam
-        
-        $result_is_still_doing_exam = self::$connection->query($sql_is_still_doing_exam);
-
-        if ($result_is_still_doing_exam->num_rows > 0) {
-            $student_exam_id;
-            while($row = $result_is_still_doing_exam->fetch_assoc()) {
-                $student_exam_id = $row["student_exam_id"];
-            }
-            return ["status_code" => 3002, "student_exam_id" => $student_exam_id];  
-        }
-
-        //then insert new exam
-        
-        if (self::$connection->query($sql_insert_new_exam) === TRUE) {
-            //echo "New record created successfully";
-            return ["status_code" => 3001, "student_exam_id" => mysqli_insert_id(self::$connection)];
-        } else {
-            echo "Error: " . $sql . "<br>" . self::$connection->error;
-        } 
-    }
-    
-    function updateExamQuestion($exam_id, $is_correct = 0) {
-        $sql = "UPDATE exam_questions
-                SET is_done = 1, is_correct = $is_correct
-                WHERE exam_id = $exam_id";
-        
-        if (self::$connection->query($sql) === TRUE) {
-            return 5001;
-        } else {
-            return 5002;
-        }
-    }
-    
-    function getNextQuestion($student_exam_id = 1) {
-        $sql = "SELECT 
-                    eq.exam_id, q.question_id, 
-                    q.question, q.choice_1, 
-                    q.choice_2, q.choice_3, 
-                    q.choice_4, q.answer, q.answer_letter
-                FROM exam_questions eq
-                LEFT JOIN questions q ON eq.question_id = q.question_id
-                WHERE student_exam_id = $student_exam_id
-                    AND eq.is_done = 0
-                ORDER BY RAND()
-                LIMIT 1;";
-
-    
-
-        $result = self::$connection->query($sql);   
-        $instructors_arr = array();
-        if ($result->num_rows > 0) {
-            while($row = $result->fetch_assoc()) {
-                $exam_id = $row["exam_id"];
-                $question_id = $row["question_id"];
-                $question = $row["question"];
-                $choice_1 = $row["choice_1"];
-                $choice_2 = $row["choice_2"];
-                $choice_3 = $row["choice_3"];
-                $choice_4 = $row["choice_4"];
-                $answer_letter = $row["answer_letter"];
-                $answer = $row["answer"];
-                $instructors_arr = array($exam_id, $question_id, 
-                    $question, $choice_1, $choice_2, $choice_3,
-                    $choice_4, $answer_letter, $answer);
-                //array_push($instructors_arr ,$temp_array);
-            }
-
-            //get question number
-            $sql_count = "
-                SELECT 
-                    COUNT(*) as question_number
-                FROM exam_questions eq
-                LEFT JOIN questions q ON eq.question_id = q.question_id
-                WHERE student_exam_id = $student_exam_id
-                    AND eq.is_done = 1;";    
-
-            $result_count = self::$connection->query($sql_count);   
-     
-            if ($result_count->num_rows > 0) {
-                while($row = $result_count->fetch_assoc()) {
-                    $question_number = $row["question_number"];
-                    array_push($instructors_arr ,$question_number);
-                }  
-            }  
-        } else {
-            $sql_finish_exam = "
-            UPDATE student_exams
-            SET is_done = 1
-            WHERE student_exam_id = $student_exam_id";
-
-            if (self::$connection->query($sql_finish_exam) === TRUE) {
-            } else {
-            }
-        }
-
-        //print_r($instructors_arr);
-        $arr = array_map('utf8_encode', $instructors_arr);
-        return $arr;
-    }
-
-    function getExamScore($student_exam_id) {
-        $sql_correct = "
-            SELECT COUNT(*) correct_answers_count, max(date_time) as date_time
-            FROM exam_questions
-            WHERE student_exam_id = $student_exam_id
-                AND is_correct = 1";
-             
-        $sql_all ="        
-            SELECT COUNT(*) all_answers_count, max(date_time) as date_time
-            FROM exam_questions
-            WHERE student_exam_id = $student_exam_id";
-
-        $result_correct = mysqli_query(self::$connection, $sql_correct);
-        $row_correct = mysqli_fetch_assoc($result_correct);
-
-        $result_all = mysqli_query(self::$connection, $sql_all);
-        $row_all = mysqli_fetch_assoc($result_all);
-
-        
-        return ["correct" => $row_correct['correct_answers_count'], 
-            "all" => $row_all['all_answers_count'], 
-            "date_time" => !is_null($row_correct['date_time']) ? $row_correct['date_time'] : $row_all['date_time'] ];
-    }
-
-    function getAllQuestions($subject_id = 1) {
-        $question_array = array();
-        $where = $subject_id == 0 ? "" : "WHERE subject_id = $subject_id";
-        $sql = "
-            SELECT * 
-            FROM questions
-            $where
-        ";
-
-        $result = self::$connection->query($sql);
-
-        while($row = $result->fetch_assoc()) {
-            array_push($question_array , $row);
-        }
-
-        return $question_array;
-    }
-
-    function addSubjectQuestion($subject_id, 
-        $question, $choice_1,
-        $choice_2, $choice_3, $choice_4, $answer_letter, $is_active = 0) {
-        $sql_insert_question = " INSERT INTO questions 
-                (subject_id, question, choice_1, 
-                choice_2, choice_3, 
-                choice_4, answer_letter, 
-                is_active) 
-                VALUES ($subject_id, 
-                '".$question."', 
-                '".$choice_1."',
-                '".$choice_2."',
-                '".$choice_3."',
-                '".$choice_4."',
-                '".$answer_letter."',
-                $is_active)";
-
-        if (self::$connection->query($sql_insert_question) === TRUE) {
-            //echo "New record created successfully";
-            return mysqli_insert_id(self::$connection);
-        } else {
-            echo "Error: " . $sql_insert_question . "<br>" . self::$connection->error;
-        }
-    }
 
     function register($username, $password, $first_name, $middle_name, $last_name) {
         $sql_insert_question = " INSERT INTO users 
