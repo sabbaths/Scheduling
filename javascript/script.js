@@ -92,8 +92,10 @@ function openEditModal(ac, schedule, slot_id, slot_time, students, instructors, 
 	    opt.innerHTML = student_list[x][1] + " " + student_list[x][2] + " " + student_list[x][3];
 	    select_student.appendChild(opt);
 	}
-	select_student.selectedIndex = students_obj.student_id - 1;
 
+	select_student.selectedIndex = students_obj.student_id - 1;
+	console.log("SELECTED STUD:" + select_student.selectedIndex + " " + students_obj.student_id);
+	
 	//PURPOSE DROPDOWN
 	var purpose_list = purpose_obj.purpose;
 	var select_purpose = document.getElementById('select_purpose');
