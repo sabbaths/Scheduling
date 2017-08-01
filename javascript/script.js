@@ -150,3 +150,12 @@ function closeEditModal() {
 	});
 
 }
+
+function openAddEditModal($from_view_id, mode_id) {
+	document.getElementById('openAddEditModal').style.display='block';
+}
+
+function closeAddEditModal() {
+	document.getElementById('openAddEditModal').style.display='none';
+}
+

@@ -84,7 +84,7 @@ class Controller {
 						"','"
 						.json_encode(['purpose_id' => $purpose_id,'purpose' => $purposes])
 						."') class=\"w3-button w3-blue w3-small\">EDIT SCHEDULE</button></p>";				
-				} else {
+				} else if($sched_value =='CANCELLED') {
 					echo "<p>" . $sched_value . "</p>";
 					echo "<p><button onclick=openEditModal('" 
 						.$aircraft_reg.
@@ -101,6 +101,9 @@ class Controller {
 						"','"
 						.json_encode([ 'purpose' => $purposes])
 						."') class=\"w3-button w3-blue w3-small\">EDIT SCHEDULE</button></p>";
+				} else {
+					echo "<p>" . $sched_value . "</p>";
+					
 				}
 
 				echo "</td>";
@@ -193,6 +196,7 @@ class Controller {
 		echo "<th class='w3-border'>FIRST NAME</th>";
 		echo "<th class='w3-border'>MIDDLE NAME</th>";
 		echo "<th class='w3-border'>LAST NAME</th>";
+		echo "<th class='w3-border'>EDIT</th>";
 		echo "</tr>";
 		
 		foreach($students as $student) {
@@ -204,6 +208,9 @@ class Controller {
 				echo "<p>" . $student_detail . "</p>";
 				echo "</td>";
 			}
+			echo "<td>";
+			echo "<p><button onclick=openEditModal('') class=\"w3-button w3-panel w3-blue w3-small w3-center w3-border w3-round-xlarge \">EDIT</button></p>";
+			echo"</td>";
 			echo "</tr>";
 		}		
 		echo "</table>";
@@ -225,6 +232,7 @@ class Controller {
 		echo "<th class='w3-border'>FIRST NAME</th>";
 		echo "<th class='w3-border'>MIDDLE NAME</th>";
 		echo "<th class='w3-border'>LAST NAME</th>";
+		echo "<th class='w3-border'>EDIT</th>";
 		echo "</tr>";
 		
 		foreach($instructors as $instructor) {
@@ -236,6 +244,9 @@ class Controller {
 				echo "<p>" . $instructor_detail . "</p>";
 				echo "</td>";
 			}
+			echo "<td>";
+			echo "<p><button onclick=openEditModal('') class=\"w3-button w3-panel w3-blue w3-small w3-center w3-border w3-round-xlarge \">EDIT</button></p>";
+			echo"</td>";
 			echo "</tr>";
 		}		
 		echo "</table>";
@@ -255,6 +266,7 @@ class Controller {
 		echo "<tr class='w3-border'>";
 		echo "<th class='w3-border'>SLOT ID</th>";
 		echo "<th class='w3-border'>SLOT</th>";
+		echo "<th class='w3-border'>EDIT</th>";
 		echo "</tr>";
 		
 		foreach($slots as $slot) {
@@ -266,6 +278,9 @@ class Controller {
 				echo "<p>" . $slot_detail . "</p>";
 				echo "</td>";
 			}
+			echo "<td>";
+			echo "<p><button onclick=openEditModal('') class=\"w3-button w3-panel w3-blue w3-small w3-center w3-border w3-round-xlarge \">EDIT</button></p>";
+			echo"</td>";
 			echo "</tr>";
 		}		
 		echo "</table>";
@@ -287,6 +302,7 @@ class Controller {
 		echo "<th class='w3-border'>REGISTRATION</th>";
 		echo "<th class='w3-border'>ACTIVE</th>";
 		echo "<th class='w3-border'>BASIC EMPTY WEIGHT</th>";
+		echo "<th class='w3-border'>EDIT</th>";
 		echo "</tr>";
 		
 		foreach($aircrafts as $aircraft) {
@@ -310,9 +326,14 @@ class Controller {
 				} else {
 					echo "<p>" . $aircraft_detail . "</p>";
 				}
+
 				echo "</td>";
+
 				$i++;
 			}
+			echo "<td>";
+			echo "<p><button onclick=openAddEditModal('') class=\"w3-button w3-panel w3-blue w3-small w3-center w3-border w3-round-xlarge \">EDIT</button></p>";
+			echo"</td>";
 			echo "</tr>";
 		}		
 		echo "</table>";

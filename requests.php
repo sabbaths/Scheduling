@@ -13,6 +13,7 @@
 <?php
 
 include_once('nav.php');
+include_once('open_edit_modal.php');
 
 ?>
     

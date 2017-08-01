@@ -4,11 +4,12 @@
 
 login
 register
-students/instructor/aircraft/slot maintenance
-student/instructor requests
-modal search
-
-
-*/
+instructor request
+student request
+student maintenance
+instructor maintenance
+user maintenance
+aircraft maintenance
+find/search in edit schedule
 
 ?>
