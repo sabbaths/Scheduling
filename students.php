@@ -23,7 +23,7 @@ include_once('open_edit_modal.php');
   <header class="w3-container w3-padding-32 w3-center w3-white" id="home">
   		<h2>STUDENTS</h2>
 	  		<?php
-				echo "<p><button onclick=openAddEditModal('') class=\"w3-button w3-panel w3-blue w3-xxlarge w3-left w3-border w3-round-xlarge \">ADD</button></p>";
+				echo "<p><button onclick=openAddEditModal('add_students_view','adding') class=\"w3-button w3-panel w3-blue w3-xxlarge w3-left w3-border w3-round-xlarge \">ADD</button></p>";
 
 	  			require('controller.php');
 	  			require('database_model.php');

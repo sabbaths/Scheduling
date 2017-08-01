@@ -6,7 +6,7 @@ class Database {
     private static $username = "root"; //apgiaa godaddy.com
     private static $password = "password";
     private static $database = "wcc_scheduling"; //apgiaa godaddy.com
-//put your code here
+    //put your code here
 
     function setEnvironment($environment = 1) {
         if($environment == 1) { //dev
@@ -30,7 +30,6 @@ class Database {
             $status_code = 901;
             die("Connection failed: " . $conn->connect_error);
         }
-        //echo "DATABASE: Connected successfully";
         return $status_code;
     }
 
@@ -75,7 +74,7 @@ class Database {
         return $schedule_date_arr;       
     }
 
-    function aircraftHandler($mode, $aircraft_id, $is_active) {
+    function aircraftHandler($mode, $aircraft_id, $is_active, $registration, $bew, $moment) {
 
         if($mode == 'edit') {
             $sql_update_aircraft = "
@@ -89,9 +88,56 @@ class Database {
                 } else {
                     return 7002; //bad
                 }             
-        } else {
-            return 7003;
+        } else if ($mode == 'add') {
+            $sql_insert = "INSERT INTO aircraft(REGISTRATION, IS_ACTIVE, BEW, MOMENT
+                ) VALUES ('$registration', 1, '$bew', '$moment')";
+
+            //echo $sql_insert;
+            if (self::$connection->query($sql_insert) === TRUE) {
+                $sql_add_ac_column = "ALTER TABLE schedule_test ADD `$registration` VARCHAR(45)";
+                echo $sql_add_ac_column;
+                if(self::$connection->query($sql_add_ac_column) == TRUE) {
+                    return 7006;    
+                } else {
+                    return 7007;
+                }
+            } else {
+                return 7005; //bad
+            }             
         }
+    }
+
+    function studentHandler($mode, $is_active, $first_name, $middle_name, $last_name) {
+
+        if($mode == 'edit') {          
+        } else if ($mode == 'add') {
+            $sql_insert = "INSERT INTO students(first_name, middle_name, last_name) VALUES ('$first_name', '$middle_name', '$last_name')";
+
+            //echo $sql_insert;
+            if (self::$connection->query($sql_insert) === TRUE) {
+                return 8001;
+            } else {
+                return 8002;
+            }             
+        }
+
+    }
+
+    function instructorHandler($mode, $is_active, $first_name, $middle_name, $last_name) {
+        
+        if($mode == 'edit') {  
+            //           
+        } else if ($mode == 'add') {
+            $sql_insert = "INSERT INTO instructors(first_name, middle_name, last_name) VALUES ('$first_name', '$middle_name', '$last_name')";
+
+            //echo $sql_insert;
+            if (self::$connection->query($sql_insert) === TRUE) {
+                return 9001;
+            } else {
+                return 9002;
+            }             
+        }
+
     }
 
     function createEditSchedule($slot_id, $instructor_id, $student_id, $aircrat_id, $date_flight, $purpose_id) {

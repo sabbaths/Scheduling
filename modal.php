@@ -8,22 +8,24 @@
 
       <form id='edit_sched_form' action='home.php'class="w3-container" action="/action_page.php">
         <div class="w3-section">
+
           <label>DATE:</label>
           <label id ='label_date_id'>DATE:</label></br>
-          <label>DATE:</label>
+          <label>AIRCRAFT:</label>
           <label id ='label_aircraft_id'><b>AIRCRAFT:</b></label></br>
           <label>SLOT:</label>
           <label id ='label_slot_id'><b>SLOT:</b></label></br></br>
-          
+
           <label><b>Instructor</b></label>
-          <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Find Username" name="username" required>
+          <input class="w3-input w3-border w3-margin-bottom" placeholder="Find Instructor" type="text" id="realtxt" onkeyup="javascript:searchSel();"/>
+          
           <div class="w3-container ">
             <select id='select_instructor' class="w3-container w3-margin-bottom">
             </select></br>
           </div>
 
           <label><b>Student</b></label>
-          <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Find Student" name="psw" required>
+          <input id="realtxtstud" class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Find Student" name="psw" onkeyup="javascript:searchSelStud();"/>
           <div class="w3-container ">
             <select id='select_student' class="w3-container w3-margin-bottom">
             </select></br>

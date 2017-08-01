@@ -6,10 +6,9 @@ login
 register
 instructor request
 student request
-student maintenance
-instructor maintenance
-user maintenance
-aircraft maintenance
+student edit
+instructor edit
+user edit
 find/search in edit schedule
 
 ?>

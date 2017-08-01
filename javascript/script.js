@@ -22,6 +22,37 @@ $(document).ready(function () {
 	});
 });
 
+
+function searchSel() 
+    {
+      var input = document.getElementById('realtxt').value.toLowerCase();
+       
+          len = input.length;
+          output = document.getElementById('select_instructor').options;
+      for(var i=0; i<output.length; i++)
+          if (output[i].text.toLowerCase().indexOf(input) != -1 ){
+          output[i].selected = true;
+              break;
+          }
+      if (input == '')
+        output[0].selected = true;
+    }
+
+function searchSelStud() 
+    {
+      var input = document.getElementById('realtxtstud').value.toLowerCase();
+       
+          len = input.length;
+          output = document.getElementById('select_student').options;
+      for(var i=0; i<output.length; i++)
+          if (output[i].text.toLowerCase().indexOf(input) != -1 ){
+          output[i].selected = true;
+              break;
+          }
+      if (input == '')
+        output[0].selected = true;
+    }
+
 function openEditModal(ac, schedule, slot_id, slot_time, students, instructors, purpose) {
 	document.getElementById('id01').style.display='block';
 	document.getElementById('label_date_id').textContent = schedule;
@@ -151,11 +182,113 @@ function closeEditModal() {
 
 }
 
-function openAddEditModal($from_view_id, mode_id) {
+function openAddEditModal(from_view, mode) {
+	
+
+	var first_label = document.getElementById('first_label');
+	var second_label = document.getElementById('second_label');
+	var third_label = document.getElementById('third_label');
+	var first_input = document.getElementById('first_input');
+	var second_input = document.getElementById('second_input');
+	var third_input = document.getElementById('third_input');
+
+	if(from_view == 'add_ac_view') {
+		document.getElementById('first_label').textContent = 'Registration';
+		document.getElementById('second_label').textContent = 'Basic Empty Weight';
+		document.getElementById('third_label').textContent = 'Moment';		
+	} else {
+		document.getElementById('first_label').textContent = 'First Name';
+		first_input.placeholder = "First Name";
+		second_input.placeholder = "Middle Name";
+		third_input.placeholder = "Last Name";
+		document.getElementById('second_label').textContent = 'Middle';
+		document.getElementById('third_label').textContent = 'Last Name';		
+		
+		document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('add_instructors_view')" );
+		if(from_view == 'add_students_view') {
+			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('add_students_view')" );
+		}
+	}
 	document.getElementById('openAddEditModal').style.display='block';
 }
 
-function closeAddEditModal() {
-	document.getElementById('openAddEditModal').style.display='none';
+function addAC(reg, bew, moment) {
+	$.ajax({  
+	    type: 'POST',  
+	    url: 'aircraft_handler.php', 
+	    data: { mode: 'add',
+	    	 	registration: reg,
+	    	 	bew: bew,
+	    	 	moment: moment,
+	    		is_active: 1
+	    },
+	    success: function(response) {
+	        console.log(response);
+	        location.reload(); 
+	    }
+	}); 
+}
+
+function editAC(reg, bew, moment) {
+	console.log('editAC');
+}
+
+function addStudent(first, middle, last) {
+	console.log("add student");
+	
+	$.ajax({  
+	    type: 'POST',  
+	    url: 'students_handler.php', 
+	    data: { mode: 'add',
+	    	 	first_name: first,
+	    	 	middle_name: middle,
+	    	 	last_name: last,
+	    		is_active: 1
+	    },
+	    success: function(response) {
+	        console.log(response);
+	        //location.reload(); 
+	    }
+	});
+}
+
+function addInstructor(first, middle, last) {
+	console.log("add instructor");
+	
+	$.ajax({  
+	    type: 'POST',  
+	    url: 'instructors_handler.php', 
+	    data: { mode: 'add',
+	    	 	first_name: first,
+	    	 	middle_name: middle,
+	    	 	last_name: last,
+	    		is_active: 1
+	    },
+	    success: function(response) {
+	        console.log(response);
+	        location.reload(); 
+	    }
+	});
+}
+
+
+function closeAddEditModal(from_view, mode) {
+	var first_input = document.getElementById('first_input').value;
+	var second_input = document.getElementById('second_input').value;
+	var third_input = document.getElementById('third_input').value;
+
+	if(first_input == "" || second_input == "" || third_input == "") {
+		alert("INPUT");
+		return;
+	}
+
+	if(from_view == 'add_ac_view') { // from aircraft add save button
+		addAC(first_input, second_input, third_input);
+	} else if (from_view == 'add_students_view') {
+		addStudent(first_input, second_input, third_input);
+	} else if (from_view == 'add_instructors_view') {
+		addInstructor(first_input, second_input, third_input);
+	}
+	//document.getElementById('openAddEditModal').style.display='none';
 }
 

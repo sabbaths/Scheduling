@@ -7,25 +7,24 @@
       </div>
 
       <form id='edit_sched_form' action='home.php'class="w3-container" action="/action_page.php">
-        <div class="w3-section">
-          <label>DATE:</label>
-          <label id ='label_date_id'>DATE:</label></br>
-          <label>DATE:</label>
-          <label id ='label_aircraft_id'><b>AIRCRAFT:</b></label></br>
-          <label>SLOT:</label>
-          <label id ='label_slot_id'><b>SLOT:</b></label></br></br>
+      <div class="w3-section">
+        
           
-          <label><b>Instructor</b></label>
-          <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Find Username" name="username" required>
+          <label id='first_label'><b>Registration</b></label>
+          <input id='first_input' class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Registration" name="username" required>
 
-          <label><b>Student</b></label>
-          <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Find Student" name="psw" required>
+          <label id='second_label'><b>Basic Empty Weight</b></label>
+          <input id='second_input' class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Basic Empty Weight" name="psw" required>
+
+          <label id='third_label'><b>Moment</b></label>
+          <input id='third_input' class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Moment" name="psw" required>
+
         </div>
 
-      <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
-        <button onclick="document.getElementById('openAddEditModal').style.display='none'" type="button" class="w3-button w3-red">CLOSE</button>
-        <button onclick=closeAddEditModal() type="button" class="w3-button w3-red">SAVE</button>
-      </div>
+        <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
+          <button onclick="document.getElementById('openAddEditModal').style.display='none'" type="button" class="w3-button w3-red">CLOSE</button>
+          <button id='btn_save_modal' onclick=closeAddEditModal('add_ac_view') type="button" class="w3-button w3-red">SAVE</button>
+        </div>
       </form>
 
     </div>
