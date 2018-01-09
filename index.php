@@ -12,28 +12,28 @@
 
 <body class="w3-white">
 
-<form action="home.php" class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin">
+<form id='testf' method='post' action="home.php" class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin">
 <h1 class="w3-center">FLIGHT SCHEDULE</h2>
  
 <div class="w3-row w3-section">
   <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-user"></i></div>
     <div class="w3-rest">
-      <input class="w3-input w3-border" name="first" type="text" placeholder="Username">
+      <input id='username' class="w3-input w3-border" name="first" type="text" placeholder="Username">
     </div>
 </div>
 
 <div class="w3-row w3-section">
   <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-user"></i></div>
     <div class="w3-rest">
-      <input class="w3-input w3-border" name="last" type="password" placeholder="Password">
+      <input id='password' class="w3-input w3-border" name="last" type="password" placeholder="Password">
     </div>
 </div>
 
 <div class="w3-row w3-section">
-  
+   <!--
     <div class="w3-rest">
       <a href="registration.php">REGISTER</a>
-    </div>
+    </div> -->
 </div>
 
 
@@ -66,6 +66,32 @@
 include_once('modal.php');
 
 ?>
+
+<script>
+
+$('#testf').submit(function(e) {
+     var form = this;
+     e.preventDefault();
+    
+    var username = $('#username').val();
+    var password = $('#password').val();
+
+    if(username.length == 0 || password.length == 0) {
+          $("#idnga").find('h1').remove();
+          $( "#idnga" ).append( "<h1>DUH!!!</h1>" );
+          alert("Input Username and Password.");
+    } else {
+      if(username == 'admin' && password == 'password') {
+        form.submit();
+      } else {
+        alert("WRONG USERNAME AND PASSWORD.");
+      }      
+    }
+
+});
+
+
+</script>
 
 
 </div>

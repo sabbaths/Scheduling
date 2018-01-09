@@ -1,19 +1,11 @@
 <?php
 
 class Database {
-    
-    public static $connection;
-    private static $servername = "127.0.0.1";
-    private static $username = "root"; //apgiaa godaddy.com
-    private static $password = "password";
-    private static $database = "wcc_scheduling"; //apgiaa godaddy.com
-    
-    /*
     public static $connection;
     private static $servername = "localhost";
     private static $username = "id2432317_sabbathsco"; //apgiaa godaddy.com
     private static $password = "ac2am9jlqwxl0";
-    private static $database = "id2432317_sabbathsco"; *///apgiaa 
+    private static $database = "id2432317_sabbathsco"; //apgiaa godaddy.com
     //put your code here
 
     function setEnvironment($environment = 1) {
@@ -46,7 +38,7 @@ class Database {
         $ac_arr = array();
 
         $sql = "SELECT s.slot_time, s.slot_id, st.*
-                FROM schedule_test st
+                FROM wcc_scheduling.schedule_test st
                 RIGHT JOIN slots s ON st.slot = s.slot_id 
                     AND st.date = '" . $schedule_date . "' ORDER BY s.slot_id";
 
@@ -330,7 +322,7 @@ class Database {
                 CONCAT(i.first_name, ' ',i.last_name) AS instructor, 
                 CONCAT(s.first_name, ' ',s.last_name) AS student, 
                 p.purpose, p.purpose_id as purpose_id, s.student_id as student_id, i.id as instructor_id
-            FROM schedule_test_ins sti
+            FROM wcc_scheduling.schedule_test_ins sti
             INNER JOIN instructors i ON i.id = sti.instructor
             INNER JOIN students s ON s. student_id =  sti.student
             INNER JOIN flight_purpose p ON p.purpose_id = sti.purpose
