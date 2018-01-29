@@ -48,7 +48,7 @@ class Database {
         $sql = "SELECT s.slot_time, s.slot_id, st.*
                 FROM schedule_test st
                 RIGHT JOIN slots s ON st.slot = s.slot_id 
-                    AND st.date = '" . $schedule_date . "' ORDER BY s.slot_id";
+                    AND st.date = '" . $schedule_date . "' WHERE s.active = 1 ORDER BY s.slot_id ";
 
         $sql_get_not_active_ac = "
             SELECT registration
@@ -82,19 +82,29 @@ class Database {
         return $schedule_date_arr;       
     }
 
-    function aircraftHandler($mode, $aircraft_id, $is_active, $registration, $bew, $moment) {
+    function aircraftHandler($mode, $aircraft_id, $registration, $bew, $moment, $is_active) {
 
         if($mode == 'edit') {
             $sql_update_aircraft = "
                 UPDATE aircraft
-                SET is_active = $is_active
+                SET is_active = $is_active,
+                    registration = '$registration',
+                    bew = '$bew',
+                    moment = '$moment'
                 WHERE aircraft_id = $aircraft_id";
 
-                
+                if($registration == "") {
+                    $sql_update_aircraft = "
+                        UPDATE aircraft
+                        SET is_active = $is_active
+                        WHERE aircraft_id = $aircraft_id";
+                }
+
+                echo $sql_update_aircraft;
                 if (self::$connection->query($sql_update_aircraft) === TRUE) {
-                    return 7001; //good
+                    return 7011; //good
                 } else {
-                    return 7002; //bad
+                    return 7022; //bad
                 }             
         } else if ($mode == 'add') {
             $sql_insert = "INSERT INTO aircraft(REGISTRATION, IS_ACTIVE, BEW, MOMENT
@@ -105,19 +115,34 @@ class Database {
                 $sql_add_ac_column = "ALTER TABLE schedule_test ADD `$registration` VARCHAR(45)";
                 echo $sql_add_ac_column;
                 if(self::$connection->query($sql_add_ac_column) == TRUE) {
-                    return 7006;    
+                    return 7001;    
                 } else {
-                    return 7007;
+                    return 7002;
                 }
             } else {
-                return 7005; //bad
+                return 7033; //bad
             }             
         }
     }
 
-    function studentHandler($mode, $is_active, $first_name, $middle_name, $last_name) {
+    function studentHandler($mode, $id_input, $first_name, $middle_name, $last_name, $is_active) {
 
-        if($mode == 'edit') {          
+        if($mode == 'edit') {
+
+            $sql_edit = 
+                        "   UPDATE `students`
+                            SET
+                            `first_name` = '$first_name',
+                            `middle_name` = '$middle_name',
+                            `last_name` = '$last_name',
+                            `is_active` = '$is_active'
+                            WHERE `student_id` = $id_input;";  
+            echo $sql_edit;
+            if (self::$connection->query($sql_edit) === TRUE) {
+                return 8011;
+            } else {
+                return 8012;
+            }
         } else if ($mode == 'add') {
             $sql_insert = "INSERT INTO students(first_name, middle_name, last_name) VALUES ('$first_name', '$middle_name', '$last_name')";
 
@@ -131,10 +156,24 @@ class Database {
 
     }
 
-    function instructorHandler($mode, $is_active, $first_name, $middle_name, $last_name) {
+    function instructorHandler($mode, $id_input, $first_name, $middle_name, $last_name, $is_active) {
         
         if($mode == 'edit') {  
-            //           
+
+            $sql_edit = 
+                        "   UPDATE `instructors`
+                            SET
+                            `first_name` = '$first_name',
+                            `middle_name` = '$middle_name',
+                            `last_name` = '$last_name',
+                            `is_active` = '$is_active'
+                            WHERE `id` = $id_input;";  
+            echo $sql_edit;
+            if (self::$connection->query($sql_edit) === TRUE) {
+                return 9011;
+            } else {
+                return 9012;
+            }         
         } else if ($mode == 'add') {
             $sql_insert = "INSERT INTO instructors(first_name, middle_name, last_name) VALUES ('$first_name', '$middle_name', '$last_name')";
 
@@ -231,7 +270,7 @@ class Database {
 
     function getStudents() {
         $students_arr = array();
-        $sql = "SELECT student_id, first_name, middle_name, last_name FROM students;";
+        $sql = "SELECT student_id, first_name, middle_name, last_name, is_active FROM students;";
         $result = self::$connection->query($sql);   
 
         if ($result->num_rows > 0) {
@@ -240,7 +279,8 @@ class Database {
                 $first_name = $row["first_name"];
                 $middle_name = $row["middle_name"];
                 $last_name = $row["last_name"];
-                $temp_array = array($student_id, $first_name, $middle_name, $last_name);
+                $is_active = $row["is_active"];
+                $temp_array = array($student_id, $first_name, $middle_name, $last_name, 'is_active' => $is_active);
                 array_push($students_arr ,$temp_array);
             }  
         }
@@ -268,7 +308,7 @@ class Database {
 
     function getInstructors() {
         $students_arr = array();
-        $sql = "SELECT id, first_name, middle_name, last_name FROM instructors;";
+        $sql = "SELECT id, first_name, middle_name, last_name,is_active FROM instructors;";
         $result = self::$connection->query($sql);   
 
         if ($result->num_rows > 0) {
@@ -277,7 +317,8 @@ class Database {
                 $first_name = $row["first_name"];
                 $middle_name = $row["middle_name"];
                 $last_name = $row["last_name"];
-                $temp_array = array($id, $first_name, $middle_name, $last_name);
+                $is_active = $row["is_active"];
+                $temp_array = array($id, $first_name, $middle_name, $last_name, $is_active);
                 array_push($students_arr ,$temp_array);
             }  
         }
@@ -295,7 +336,8 @@ class Database {
             while($row = $result->fetch_assoc()) {
                 $slot_id = $row["slot_id"];
                 $slot_time = $row["slot_time"];
-                $temp_array = array($slot_id, $slot_time);
+                $slot_is_active = $row["active"];
+                $temp_array = array($slot_id, $slot_time, $slot_is_active);
                 array_push($students_arr ,$temp_array);
             }  
         }
@@ -348,12 +390,13 @@ class Database {
     
     function login($username, $password) {
         //103 does not exist 102 incorrect pw 101 all good
-        $status_code = 103;
+        $status_code = 1009;
         $is_account_exists = false;
         $user = array();
         
         try {
             $sql = "SELECT COUNT(*) as is_account_exists FROM users WHERE username = '" . $username . "' and is_active = 1 ";
+            //echo $sql;
             $result = self::$connection->query($sql);
             
             if ($result->num_rows > 0) {
@@ -373,12 +416,12 @@ class Database {
                 $result = self::$connection->query($sql);
 
                 if ($result->num_rows > 0) {
-                    $status_code = 102;
+                    $status_code = 1002;
 
                     while($row = $result->fetch_assoc()) {
                         $firstRow = $row["is_correct_un_pw"];
                         if($firstRow == 1) {
-                           $status_code = 101;
+                           $status_code = 1001;
 
                             $sql = "SELECT *  FROM users WHERE username = '" .
                                 $username . "' and password = '" . $password . "' and is_active = 1 ";   
@@ -391,12 +434,12 @@ class Database {
                         }
                     }
                 } else {
-                    $status_code = 102;
+                    $status_code = 1002;
                 }
                 
             }
         } catch (Exception $ex) {
-            echo $ex;
+            return [$status_code, $ex];
         }
 
         return [$status_code, $user];
@@ -428,7 +471,7 @@ class Database {
     
 
 
-    function register($username, $password, $first_name, $middle_name, $last_name) {
+    function register($username, $password, $first_name, $middle_name, $last_name, $email, $phone) {
         $sql_insert_question = " INSERT INTO users 
                 (username, password, first_name, middle_name, last_name) 
                 VALUES ( 
@@ -442,14 +485,14 @@ class Database {
         $result_check_user = self::$connection->query($sql_check_user); 
 
         if ($result_check_user->num_rows > 0) { 
-            return 5002;
+            return 5003;
         }
 
 
         if (self::$connection->query($sql_insert_question) === TRUE) {
             return 5001; //good
         } else {   
-            return 5004; //error
+            return 5002; //error
         }
     }
 

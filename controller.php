@@ -2,8 +2,8 @@
 
 class Controller {
 	function generateScheduleTable($schedule_date) {
-		echo "<div class='w3-container w3-border'><h2>SCHEDULE DATE: " . $schedule_date . "</h2></div>";
-		echo "<header class='w3-container w3-padding-32 w3-center w3-white' id='home'>";
+		echo "<div class='w3-container '><h2>SCHEDULE DATE: " . $schedule_date . "</h2></div>";
+		echo "<header class='w3-container w3-margin-bottom w3-center w3-white' id='home'>";
 
 		$database = new Database();
 		$database->connectDB();
@@ -56,7 +56,7 @@ class Controller {
 						.json_encode([ 'instructors' => $instructors]).
 						"','"
 						.json_encode([ 'purpose' => $purposes])
-						."') class=\"w3-button w3-blue w3-small\">EDIT SCHEDULE</button></p>";
+						."') class=\"w3-button w3-red w3-small\">EDIT SCHEDULE</button></p>";
 					//echo "<p><button onclick=\"document.getElementById('id01').style.display='block'\" class=\"w3-button w3-blue w3-small\">EDIT</button></p>";
 				} else if (ctype_digit($sched_value))  {
 					$schedule_detail = $database->getScheduleDetails($sched_value);
@@ -83,7 +83,7 @@ class Controller {
 						.json_encode(['instructor_id' => $instructor_id,'instructors' => $instructors]).
 						"','"
 						.json_encode(['purpose_id' => $purpose_id,'purpose' => $purposes])
-						."') class=\"w3-button w3-blue w3-small\">EDIT SCHEDULE</button></p>";				
+						."') class=\"w3-button w3-red w3-small\">EDIT SCHEDULE</button></p>";				
 				} else if($sched_value =='CANCELLED') {
 					echo "<p>" . $sched_value . "</p>";
 					echo "<p><button onclick=openEditModal('" 
@@ -100,7 +100,7 @@ class Controller {
 						.json_encode([ 'instructors' => $instructors]).
 						"','"
 						.json_encode([ 'purpose' => $purposes])
-						."') class=\"w3-button w3-blue w3-small\">EDIT SCHEDULE</button></p>";
+						."') class=\"w3-button w3-red w3-small\">EDIT SCHEDULE</button></p>";
 				} else {
 					echo "<p>" . $sched_value . "</p>";
 					
@@ -117,9 +117,10 @@ class Controller {
 	}
 
 	function generateIndexScheduleTable($schedule_date) {
-		echo "<div class='w3-container w3-border'><h2>SCHEDULE DATE: " . $schedule_date . "</h2></div>";
-		echo "<header class='w3-container w3-padding-32 w3-center w3-white' id='home'>";
-
+		//remove w3-border
+		echo "<div class='w3-container '><h2>SCHEDULE DATE: " . $schedule_date . "</h2></div>";
+		echo "<header class='w3-container w3-center w3-white' id='home'>";
+		//remove w3-padding-32
 		$database = new Database();
 		$database->connectDB();
 		$schedules =  $database->getSchedules($schedule_date);
@@ -192,24 +193,42 @@ class Controller {
 
 		$students =  $database->getStudents();
 		echo "<tr class='w3-border'>";
-		echo "<th class='w3-border'>STUDENT ID</th>";
-		echo "<th class='w3-border'>FIRST NAME</th>";
-		echo "<th class='w3-border'>MIDDLE NAME</th>";
-		echo "<th class='w3-border'>LAST NAME</th>";
-		echo "<th class='w3-border'>EDIT</th>";
+		echo "<th class='w3-border'>Student ID</th>";
+		echo "<th class='w3-border'>First Name</th>";
+		echo "<th class='w3-border'>Middle Name</th>";
+		echo "<th class='w3-border'>Last Name</th>";
+		echo "<th class='w3-border'>Active</th>";
+		echo "<th class='w3-border'>Edit</th>";
 		echo "</tr>";
 		
 		foreach($students as $student) {
 			//print_r($student); echo "</br>";
+			$json_test = htmlentities(json_encode($student));
 			echo "<tr>";
 			
+			$counter_for_active = 1;
+			$student_id = "";
+			$json_student = json_encode($student);
 			foreach($student as $student_detail) {
-				echo "<td class='w3-border'>";
-				echo "<p>" . $student_detail . "</p>";
-				echo "</td>";
+				echo "<td class='w3-border'><p>";
+				if($counter_for_active == 5) {
+					$is_active_checked = $student_detail == '1' ? 'CHECKED' : '';
+
+					echo "<input id='$json_test' class='active_student' type = 'checkbox' name='var1' $is_active_checked>";
+				} else if($counter_for_active == 1) {
+					echo $student_id = $student_detail;
+			 	} else {
+					echo $student_detail;
+				}
+				echo "</p></td>";			
+				$counter_for_active++;
 			}
 			echo "<td>";
-			echo "<p><button onclick=openEditModal('') class=\"w3-button w3-panel w3-blue w3-small w3-center w3-border w3-round-xlarge \">EDIT</button></p>";
+			echo "<p>
+					<button onclick=\"openAddEditModal('students_table_view', 'edit',$json_test)\">
+					EDIT
+					</button>
+				  </p>";
 			echo"</td>";
 			echo "</tr>";
 		}		
@@ -232,20 +251,47 @@ class Controller {
 		echo "<th class='w3-border'>FIRST NAME</th>";
 		echo "<th class='w3-border'>MIDDLE NAME</th>";
 		echo "<th class='w3-border'>LAST NAME</th>";
+		echo "<th class='w3-border'>Active</th>";
 		echo "<th class='w3-border'>EDIT</th>";
 		echo "</tr>";
 		
+
 		foreach($instructors as $instructor) {
 			//print_r($student); echo "</br>";
 			echo "<tr>";
-			
+			$json_test = htmlentities(json_encode($instructor));
+			$counter_for_active = 1;
+			$instructor_id = "";	
+			/*		
 			foreach($instructor as $instructor_detail) {
 				echo "<td class='w3-border'>";
 				echo "<p>" . $instructor_detail . "</p>";
 				echo "</td>";
+
+				$counter_for_active++;
+			} */
+
+			foreach($instructor as $instructor_detail) {
+				echo "<td class='w3-border'><p>";
+				if($counter_for_active == 5) {
+					$is_active_checked = $instructor_detail == '1' ? 'CHECKED' : '';
+
+					echo "<input id='$json_test' class='active_instructor' type = 'checkbox' name='var1' $is_active_checked>";
+				} else if($counter_for_active == 1) {
+					echo $instructor_id = $instructor_detail;
+			 	} else {
+					echo $instructor_detail;
+				}
+				echo "</p></td>";			
+				$counter_for_active++;
 			}
+
 			echo "<td>";
-			echo "<p><button onclick=openEditModal('') class=\"w3-button w3-panel w3-blue w3-small w3-center w3-border w3-round-xlarge \">EDIT</button></p>";
+			echo "<p>
+					<button onclick=\"openAddEditModal('instructors_table_view', 'edit',$json_test)\">
+					EDIT
+					</button>
+				  </p>";
 			echo"</td>";
 			echo "</tr>";
 		}		
@@ -267,22 +313,35 @@ class Controller {
 		echo "<th class='w3-border'>SLOT ID</th>";
 		echo "<th class='w3-border'>SLOT</th>";
 		echo "<th class='w3-border'>EDIT</th>";
+		echo "<th class='w3-border'>Active</th>";
 		echo "</tr>";
 		
 		foreach($slots as $slot) {
-			//print_r($student); echo "</br>";
 			echo "<tr>";
-			
-			foreach($slot as $slot_detail) {
-				echo "<td class='w3-border'>";
-				echo "<p>" . $slot_detail . "</p>";
-				echo "</td>";
-			}
+
+			echo "<td class='w3-border'>";
+			echo "<p>" . $slot[0] . "</p>";
+			echo "</td>";		
+
+			echo "<td class='w3-border'>";
+			echo "<p>" . $slot[1] . "</p>";
+			echo "</td>";		
+
 			echo "<td>";
-			echo "<p><button onclick=openEditModal('') class=\"w3-button w3-panel w3-blue w3-small w3-center w3-border w3-round-xlarge \">EDIT</button></p>";
+			echo "<p><button onclick=openAddEditModal('edit_slot_view') class=\"w3-button w3-panel w3-blue w3-small w3-center w3-border w3-round-xlarge \">EDIT</button></p>";
 			echo"</td>";
+
+			echo "<td>";
+			if($slot[2] == 1) {
+				echo "<input id='1' class='active_airact' type = 'checkbox' name='1' CHECKED>";
+			} else {
+				echo "<input id='1' class='active_airact' type = 'checkbox' name='1' >";
+			}
+			echo "</td>";
+
 			echo "</tr>";
-		}		
+		}
+				
 		echo "</table>";
 		echo "</div>";
 		echo "</header>";
@@ -307,6 +366,7 @@ class Controller {
 		
 		foreach($aircrafts as $aircraft) {
 			//print_r($student); echo "</br>";
+			$json_test = htmlentities(json_encode($aircraft));
 			echo "<tr>";
 			
 			$i = 1;
@@ -332,7 +392,11 @@ class Controller {
 				$i++;
 			}
 			echo "<td>";
-			echo "<p><button onclick=openAddEditModal('') class=\"w3-button w3-panel w3-blue w3-small w3-center w3-border w3-round-xlarge \">EDIT</button></p>";
+			echo "<p>
+					<button onclick=\"openAddEditModal('ac_table_view', 'edit',$json_test)\">
+					EDIT
+					</button>
+				</p>";
 			echo"</td>";
 			echo "</tr>";
 		}		

@@ -3,16 +3,14 @@
 <title>FLIGHT SCHEDULE</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="css/user.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="javascript/jquery.min.js"></script>
 <script src="javascript/script.js"></script>
+<link rel="stylesheet" href="css/user.css">
+<link rel="stylesheet" href="css/w3.css">
 
 <body class="w3-white">
 
-<form id='testf' method='post' action="home.php" class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin">
+<form id='login_form' method='post' action="home.php" class="w3-container w3-card-4 w3-light-grey w3-text-red w3-margin">
 <h1 class="w3-center">FLIGHT SCHEDULE</h2>
  
 <div class="w3-row w3-section">
@@ -30,21 +28,20 @@
 </div>
 
 <div class="w3-row w3-section">
-   <!--
     <div class="w3-rest">
       <a href="registration.php">REGISTER</a>
-    </div> -->
+    </div>
 </div>
 
 
 
-<button class="w3-button w3-block w3-section w3-blue w3-ripple w3-padding">Login</button>
+<button class="w3-button w3-block w3-section w3-grey w3-ripple w3-padding">Login</button>
 
 </form>
 
 <div class="w3-padding-large" id="main">
   <!-- Header/Home -->
-  <header class="w3-container w3-padding-32 w3-center w3-white" id="home">
+  <header class="w3-container w3-center w3-white" id="home">
   	<?php
       require('database_model.php');
       require('controller.php');
@@ -63,36 +60,9 @@
 
 <?php
 
-include_once('modal.php');
+include_once('edit_schedule_modal.php');
 
 ?>
-
-<script>
-
-$('#testf').submit(function(e) {
-     var form = this;
-     e.preventDefault();
-    
-    var username = $('#username').val();
-    var password = $('#password').val();
-
-    if(username.length == 0 || password.length == 0) {
-          $("#idnga").find('h1').remove();
-          $( "#idnga" ).append( "<h1>DUH!!!</h1>" );
-          alert("Input Username and Password.");
-    } else {
-      if(username == 'admin' && password == 'password') {
-        form.submit();
-      } else {
-        alert("WRONG USERNAME AND PASSWORD.");
-      }      
-    }
-
-});
-
-
-</script>
-
 
 </div>
 </body>

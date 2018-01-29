@@ -9,6 +9,9 @@
       <form id='edit_sched_form' action='home.php'class="w3-container" action="/action_page.php">
       <div class="w3-section">
         
+
+          <label id='id_label'><b>ID</b></label>
+          <input id='id_input' class="w3-input w3-border w3-margin-bottom" type="text" placeholder="ID" name="username" required>
           
           <label id='first_label'><b>Registration</b></label>
           <input id='first_input' class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Registration" name="username" required>

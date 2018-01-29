@@ -1,5 +1,85 @@
 $(document).ready(function () {
 
+	$('#login_form').submit(function(e) {
+		if(false) { //offline mode
+			form.submit();
+		}
+
+	    var form = this;
+	    e.preventDefault();
+	    
+	    var username = $('#username').val();
+	    var password = $('#password').val();
+
+	    if(username.length == 0 || password.length == 0) {
+	          $("#idnga").find('h1').remove();
+	          $( "#idnga" ).append( "<h1>DUH!!!</h1>" );
+	          alert("Input Username and Password.");
+	    } else {
+			$.ajax({
+			    type: 'POST',  
+			    url: 'login_handler.php', 
+			    data: { username: username,
+			    		password: password
+			    },
+			    success: function(response) {
+			        console.log(response);
+			        
+			      if(response == '1001') {
+			        form.submit();
+			      } else if(response == '1002'){
+			        alert("Wrong Username or Password");
+			      } else {
+			      	alert("Account does not exist");
+			      }     
+			    }
+			});
+	    } 
+
+	});
+
+	$('#registration_form').submit(function(e) {
+	    var form = this;
+	    e.preventDefault();
+	    var username = $('#username').val();
+	    var first_name = $('#first_name').val();
+	    var middle_name = $('#middle_name').val();
+	    var last_name = $('#last_name').val();
+	    var password = $('#password').val();
+	    var email = $('#email').val();
+	    var phone = $('#phone').val();
+		console.log("registration");
+
+	    if(first_name.length == 0 || last_name.length == 0) {
+    		alert("Null Fields");
+	    } else {
+			$.ajax({
+			    type: 'POST',  
+			    url: 'registration_handler.php', 
+			    data: { username: username,
+			    		first_name: first_name,
+			    		middle_name: middle_name,
+			    		last_name: last_name,
+			    		password: password,
+			    		email: email,
+			    		phone: phone,
+			    },
+			    success: function(response) {
+		        	console.log(response); 
+
+			      if(response == '5001') {
+			        form.submit();
+			      } else if(response == '5002'){
+			        alert("Registration Error");
+			      } else {
+			      	alert("Account already exists");
+			      }   
+			    }
+			});
+	    }
+	});
+
+
 	$('.active_airact').change(function () {
 		var input_id =  $(this).attr('id');
 		//console.log(input_id);
@@ -12,19 +92,42 @@ $(document).ready(function () {
 		    type: 'POST',  
 		    url: 'aircraft_handler.php', 
 		    data: { mode: 'edit',
-		    	 	aircraft_id: input_id,
+		    	 	id_input: input_id,
 		    		is_active: is_active
 		    },
 		    success: function(response) {
+		        console.log(response);
 		        location.reload();  
 		    }
 		}); 
+	});
+
+	$('.active_student').change(function () {
+		var student_details =  JSON.parse($(this).attr('id'));
+		//console.log(input_id);
+		var is_active = $(this).is(":checked") == true ? 1 : 0;
+
+		console.log("Student Detail: " +student_details + " Active: " + is_active);
+		
+		addEditStudent('edit', student_details[0],student_details[1],student_details[2],
+			student_details[3], is_active);
+	});
+
+	$('.active_instructor').change(function () {
+		var inst_details =  JSON.parse($(this).attr('id'));
+		//console.log(input_id);
+		var is_active = $(this).is(":checked") == true ? 1 : 0;
+
+		console.log("Inst Detail: " +inst_details + " Active: " + is_active);
+		
+		addEditInstructor('edit', inst_details[0],inst_details[1],inst_details[2],
+			inst_details[3], is_active);
 	});
 });
 
 
 function searchSel() 
-    {
+{
       var input = document.getElementById('realtxt').value.toLowerCase();
        
           len = input.length;
@@ -36,10 +139,9 @@ function searchSel()
           }
       if (input == '')
         output[0].selected = true;
-    }
+}
 
-function searchSelStud() 
-    {
+function searchSelStud() {
       var input = document.getElementById('realtxtstud').value.toLowerCase();
        
           len = input.length;
@@ -51,10 +153,11 @@ function searchSelStud()
           }
       if (input == '')
         output[0].selected = true;
-    }
+S}
 
+//schedules table in home.php
 function openEditModal(ac, schedule, slot_id, slot_time, students, instructors, purpose) {
-	document.getElementById('id01').style.display='block';
+	document.getElementById('editScheduleModal').style.display='block';
 	document.getElementById('label_date_id').textContent = schedule;
 	document.getElementById('label_date_id').value = schedule;
 	document.getElementById('label_aircraft_id').textContent = ac;
@@ -113,7 +216,7 @@ function openEditModal(ac, schedule, slot_id, slot_time, students, instructors, 
 }
 
 function cancelFlightModal() {
-	document.getElementById('id01').style.display='none';
+	document.getElementById('editScheduleModal').style.display='none';
 	var selected_instructor = $('#select_instructor').find(":selected").text();
 	var instructor_id = $('#select_instructor').find(":selected").val() || "";
 	var selected_student = $('#select_student').find(":selected").text();
@@ -147,9 +250,10 @@ function cancelFlightModal() {
 	});
 
 }
-
+//close edit schedules
 function closeEditModal() {
-	document.getElementById('id01').style.display='none';
+	document.getElementById('editScheduleModal').style.display='none';
+	//document.getElementById('openAddEditModal').style.display='none';
 	var selected_instructor = $('#select_instructor').find(":selected").text();
 	var instructor_id = $('#select_instructor').find(":selected").val();
 	var selected_student = $('#select_student').find(":selected").text();
@@ -184,45 +288,56 @@ function closeEditModal() {
 
 }
 
-function openAddEditModal(from_view, mode) {
+function addEditStudent(mode, id, first, middle, last, is_active) {
+	console.log("add edit student");
 	
-
-	var first_label = document.getElementById('first_label');
-	var second_label = document.getElementById('second_label');
-	var third_label = document.getElementById('third_label');
-	var first_input = document.getElementById('first_input');
-	var second_input = document.getElementById('second_input');
-	var third_input = document.getElementById('third_input');
-
-	if(from_view == 'add_ac_view') {
-		document.getElementById('first_label').textContent = 'Registration';
-		document.getElementById('second_label').textContent = 'Basic Empty Weight';
-		document.getElementById('third_label').textContent = 'Moment';		
-	} else {
-		document.getElementById('first_label').textContent = 'First Name';
-		first_input.placeholder = "First Name";
-		second_input.placeholder = "Middle Name";
-		third_input.placeholder = "Last Name";
-		document.getElementById('second_label').textContent = 'Middle';
-		document.getElementById('third_label').textContent = 'Last Name';		
-		
-		document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('add_instructors_view')" );
-		if(from_view == 'add_students_view') {
-			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('add_students_view')" );
-		}
-	}
-	document.getElementById('openAddEditModal').style.display='block';
+	$.ajax({  
+	    type: 'POST',  
+	    url: 'students_handler.php', 
+	    data: { mode: mode,
+	    		id_input: id,
+	    	 	first_name: first,
+	    	 	middle_name: middle,
+	    	 	last_name: last,
+	    		is_active: is_active
+	    },
+	    success: function(response) {
+	        console.log(response);
+	        location.reload(); 
+	    }
+	});
 }
 
-function addAC(reg, bew, moment) {
+function addEditInstructor(mode, id, first, middle, last, is_active) {
+	console.log("add edit instructor");
+	
+	$.ajax({  
+	    type: 'POST',  
+	    url: 'instructors_handler.php', 
+	    data: { mode: mode,
+	    		id_input: id,
+	    	 	first_name: first,
+	    	 	middle_name: middle,
+	    	 	last_name: last,
+	    		is_active: is_active
+	    },
+	    success: function(response) {
+	        console.log(response);
+	        location.reload(); 
+	    }
+	});
+}
+
+function addEditAC(mode, id_input, reg, bew, moment, is_active) {
 	$.ajax({  
 	    type: 'POST',  
 	    url: 'aircraft_handler.php', 
-	    data: { mode: 'add',
+	    data: { mode: mode,
+	    		id_input: id_input,
 	    	 	registration: reg,
 	    	 	bew: bew,
 	    	 	moment: moment,
-	    		is_active: 1
+	    		is_active: is_active
 	    },
 	    success: function(response) {
 	        console.log(response);
@@ -230,67 +345,137 @@ function addAC(reg, bew, moment) {
 	    }
 	}); 
 }
+//add edit of every page
+function openAddEditModal(from_view, mode, data_array = '') {
+	document.getElementById('openAddEditModal').style.display='block';
+	var first_label = document.getElementById('first_label');
+	var second_label = document.getElementById('second_label');
+	var third_label = document.getElementById('third_label');
+	var first_input = document.getElementById('first_input');
+	var second_input = document.getElementById('second_input');
+	var third_input = document.getElementById('third_input');
 
-function editAC(reg, bew, moment) {
-	console.log('editAC');
-}
+	id_input.placeholder = "ID";
+	first_input.placeholder = "First Name";
+	second_input.placeholder = "Middle Name";
+	third_input.placeholder = "Last Name";
+	first_label.textContent = 'First Name';
+	second_label.textContent = 'Middle Name';
+	third_label.textContent = 'Last Name';
+	id_input.disabled = true;
+	id_input.value = "";
+	first_input.value = "";
+	second_input.value = "";
+	third_input.value = "";
+	second_input.disabled = false;
 
-function addStudent(first, middle, last) {
-	console.log("add student");
+
+	console.log(from_view, mode, data_array);
+	if(from_view == 'ac_table_view') {
+			document.getElementById('first_label').textContent = 'Registration';
+			document.getElementById('second_label').textContent = 'Active';
+			document.getElementById('third_label').textContent = 'Basic Empty Weight';		
+			first_input.placeholder = "Registration";
+			second_input.placeholder = "Active";
+			third_input.placeholder = "Basic Empty Weight";
+		if(mode == 'add') {
+			//second_label.hidden = true;
+			//second_input.hidden = true;
+			
+			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('ac_table_view','add')" );
+		} else {
+			second_input.disabled = true;
+			second_input.disabled = true;
+			id_input.value = data_array[0];
+			first_input.value = data_array[1];
+			second_input.value = data_array[2] == '1' ? "Yes" : "No";
+			third_input.value = data_array[3];
+
+			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('ac_table_view','edit')" );
+		}
+	} else if(from_view == 'edit_slot_view') { 
+		first_label.textContent = 'Slot ID';
+		second_label.textContent = 'Slot Time';
+		third_input.visible = false;
+	} else if(from_view == 'students_table_view') {
+		if(mode == 'add') {
+			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('students_table_view','add')" );
+		} else {
+			id_input.value = data_array[0];
+			first_input.value = data_array[1];
+			second_input.value = data_array[2];
+			third_input.value = data_array[3];
+
+			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('students_table_view','edit')" );
+		}	
+	} else if(from_view == 'instructors_table_view') {
+		if(mode == 'add') {
+			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('instructors_table_view','add')" );
+		} else {
+			id_input.value = data_array[0];
+			first_input.value = data_array[1];
+			second_input.value = data_array[2];
+			third_input.value = data_array[3];
+
+			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('instructors_table_view','edit')" );
+		}
+	} /*else {
+		document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('add_instructors_view')" );
+		if(from_view == 'add_students_view') {
+			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('add_students_view', 'add')" );
+		}
+	} */
 	
-	$.ajax({  
-	    type: 'POST',  
-	    url: 'students_handler.php', 
-	    data: { mode: 'add',
-	    	 	first_name: first,
-	    	 	middle_name: middle,
-	    	 	last_name: last,
-	    		is_active: 1
-	    },
-	    success: function(response) {
-	        console.log(response);
-	        //location.reload(); 
-	    }
-	});
 }
-
-function addInstructor(first, middle, last) {
-	console.log("add instructor");
-	
-	$.ajax({  
-	    type: 'POST',  
-	    url: 'instructors_handler.php', 
-	    data: { mode: 'add',
-	    	 	first_name: first,
-	    	 	middle_name: middle,
-	    	 	last_name: last,
-	    		is_active: 1
-	    },
-	    success: function(response) {
-	        console.log(response);
-	        location.reload(); 
-	    }
-	});
-}
-
 
 function closeAddEditModal(from_view, mode) {
+	console.log(from_view + " "  + mode);
+	var id_input = document.getElementById('id_input').value;
 	var first_input = document.getElementById('first_input').value;
 	var second_input = document.getElementById('second_input').value;
 	var third_input = document.getElementById('third_input').value;
+	var is_active = 1;//document.getElementById('third_input').value;
 
+	//check for null inputs
 	if(first_input == "" || second_input == "" || third_input == "") {
-		alert("INPUT");
+		alert("Invalid Fields");
 		return;
 	}
 
+	if(from_view == "students_table_view") {
+		if(mode == 'add') {
+			addEditStudent(mode, id_input, first_input, second_input, third_input, 1);
+			//addStudent(first_input, second_input, third_input);
+		} else {
+			addEditStudent(mode, id_input, first_input, second_input, third_input, is_active);
+		}
+	} else if(from_view == "instructors_table_view") {
+		if(mode == 'add') {
+			//addEditStudent(mode, id_input, first_input, second_input, third_input, 1);
+			addEditInstructor(mode, id_input, first_input, second_input, third_input, 1);
+		} else {
+			addEditInstructor(mode, id_input, first_input, second_input, third_input, is_active);
+		}
+	} else if(from_view == "ac_table_view") {
+		if(mode == 'add') {
+			addEditAC(mode, id_input, first_input, third_input, third_input, is_active);
+		} else {
+			addEditAC(mode, id_input, first_input, third_input, third_input, is_active);
+		}
+	}
+
+	//save data to database
+
+	/* old code add students
 	if(from_view == 'add_ac_view') { // from aircraft add save button
 		addAC(first_input, second_input, third_input);
-	} else if (from_view == 'add_students_view') {
+	} else if (from_view == 'add_students_view' && mode == 'add') {
 		addStudent(first_input, second_input, third_input);
 	} else if (from_view == 'add_instructors_view') {
 		addInstructor(first_input, second_input, third_input);
-	}
-	//document.getElementById('openAddEditModal').style.display='none';
+	} */
+
+	//close the modal
+	document.getElementById('openAddEditModal').style.display='none'; 
 }
 
