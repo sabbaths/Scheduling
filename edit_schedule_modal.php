@@ -9,6 +9,8 @@
       <form id='edit_sched_form' action='home.php'class="w3-container" action="/action_page.php">
         <div class="w3-section">
 
+          <label>DATA ID:</label>
+          <label id ='label_data_id'>DATA ID:</label></br>
           <label>DATE:</label>
           <label id ='label_date_id'>DATE:</label></br>
           <label>AIRCRAFT:</label>

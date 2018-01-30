@@ -1,3 +1,8 @@
+<?php 
+include_once('check_session.php');
+?>
+
+
 <!DOCTYPE html>
 <html>
 <title>WCC SCHEDULING</title>

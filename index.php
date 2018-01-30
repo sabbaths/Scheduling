@@ -16,14 +16,14 @@
 <div class="w3-row w3-section">
   <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-user"></i></div>
     <div class="w3-rest">
-      <input id='username' class="w3-input w3-border" name="first" type="text" placeholder="Username">
+      <input id='username' name='username' class="w3-input w3-border" name="first" type="text" placeholder="Username">
     </div>
 </div>
 
 <div class="w3-row w3-section">
   <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-user"></i></div>
     <div class="w3-rest">
-      <input id='password' class="w3-input w3-border" name="last" type="password" placeholder="Password">
+      <input id='password' name='password' class="w3-input w3-border" name="last" type="password" placeholder="Password">
     </div>
 </div>
 

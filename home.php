@@ -1,3 +1,16 @@
+<?php 
+session_start(); 
+
+if(isset($_SESSION['username'])) {
+} else if(isset($_POST['username'])) {
+  $_SESSION['username']= $_POST['username'];
+} else {
+  echo "UNAUTHORIZED";
+  exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html>
 <title>SCHEDULING</title>
@@ -10,7 +23,7 @@
 
 <body class="w3-white">
 
-<?php include_once('nav.php');?>
+<?php include_once('nav.php'); ?>
 
 <div class="w3-padding-large" id="main">
   <!-- Header/Home -->

@@ -156,15 +156,17 @@ function searchSelStud() {
 S}
 
 //schedules table in home.php
-function openEditModal(ac, schedule, slot_id, slot_time, students, instructors, purpose) {
+function openEditModal(ac, schedule, slot_id, slot_time, students, instructors, purpose, tabledataid) {
 	document.getElementById('editScheduleModal').style.display='block';
+	document.getElementById('label_data_id').textContent = tabledataid;
+	document.getElementById('label_data_id').value = tabledataid;
 	document.getElementById('label_date_id').textContent = schedule;
 	document.getElementById('label_date_id').value = schedule;
 	document.getElementById('label_aircraft_id').textContent = ac;
 	document.getElementById('label_aircraft_id').value = ac;
 	document.getElementById('label_slot_id').textContent = slot_time;
 	document.getElementById('label_slot_id').value = slot_id;
-
+	//console.log(tabledataid);
     students_obj = JSON.parse(students);
     instructors_obj = JSON.parse(instructors);
     purpose_obj = JSON.parse(purpose);
@@ -223,10 +225,12 @@ function cancelFlightModal() {
 	var student_id = $('#select_student').find(":selected").val();
 	var selected_purpose = $('#select_purpose').find(":selected").text();
 	var purpose_id = $('#select_purpose').find(":selected").val();
+	var data_flight = $('#label_data_id').val();
 	var date_flight = $('#label_date_id').val();
 	var aircraft_id = $('#label_aircraft_id').val();
 	var slot_id = $('#label_slot_id').val();
 	var slot_time = $('#label_slot_id').text();
+	console.log(data_flight);
 	console.log(selected_instructor + " " + instructor_id);
 	console.log(selected_student + " " + student_id);
 	console.log(selected_purpose + " " + purpose_id);
@@ -245,7 +249,13 @@ function cancelFlightModal() {
 	    		aircraft_id: aircraft_id,
 	    },
 	    success: function(response) {
-	    	location.reload();
+	    	//location.reload();
+	        $("#"+data_flight).remove("p", "<p>");
+	        $("#"+data_flight+" > p").remove();
+	        $("#"+data_flight).prepend( "<p>CANCELLED</p>");
+	    },
+	    error: function() {
+	    	alert("Error: Contact Developer");
 	    }
 	});
 
@@ -261,15 +271,19 @@ function closeEditModal() {
 	var selected_purpose = $('#select_purpose').find(":selected").text();
 	var purpose_id = $('#select_purpose').find(":selected").val();
 	var date_flight = $('#label_date_id').val();
+	var data_flight = $('#label_data_id').val();
 	var aircraft_id = $('#label_aircraft_id').val()
 	var slot_id = $('#label_slot_id').val()
 	var slot_time = $('#label_slot_id').text()
+	var table_td = document.getElementById(data_flight);
+	/*
+	console.log(data_flight);
 	console.log(selected_instructor + " " + instructor_id);
 	console.log(selected_student + " " + student_id);
 	console.log(selected_purpose + " " + purpose_id);
 	console.log(date_flight);
 	console.log(aircraft_id);
-	console.log(slot_id + " " + slot_time);
+	console.log(slot_id + " " + slot_time); */
 
 	$.ajax({  
 	    type: 'POST',  
@@ -282,7 +296,16 @@ function closeEditModal() {
 	    		aircraft_id: aircraft_id,
 	    },
 	    success: function(response) {
-	        location.reload();  
+	        //location.reload();  
+	        //console.log("append" + data_flight);
+	        $("#"+data_flight).remove("p", "<p>");
+	        $("#"+data_flight+" > p").remove();
+	        $("#"+data_flight).prepend( "<p>PURPOSE: " + selected_purpose + "</p>");
+	        $("#"+data_flight).prepend( "<p>STUDENT: " + selected_student + "</p>");
+	        $("#"+data_flight).prepend( "<p>CAPT: " + selected_instructor + "</p>");
+	    },
+	    error: function(response) {
+	    	alert("Error: Contact Developer");
 	    }
 	});
 
@@ -479,3 +502,9 @@ function closeAddEditModal(from_view, mode) {
 	document.getElementById('openAddEditModal').style.display='none'; 
 }
 
+function w3_open() {
+    document.getElementById("mySidebar").style.display = "block";
+}
+function w3_close() {
+    document.getElementById("mySidebar").style.display = "none";
+}

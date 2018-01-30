@@ -27,9 +27,9 @@ class Controller {
 				echo "</th>";
 		}
 		echo "</tr>";
-
+		$test_counter = 1;
 		foreach($schedules as $schedule) {
-			
+				
 			echo "<tr>";
 			
 			foreach($schedule as $sched_key => $sched_value) {
@@ -38,11 +38,11 @@ class Controller {
 				$slot_id = $schedule['slot_id'];
 				$aircraft_reg = $sched_key;
 
-				echo "<td class='w3-border'>";
+				echo "<td id='td$test_counter$schedule_date' class='w3-border'>";
 
 				if($sched_value == NULL) {
-					echo "None";
-					echo "<p><button onclick=openEditModal('" 
+					echo "<p>None</p>";
+					echo "<button onclick=openEditModal('" 
 						.$aircraft_reg.
 						"','"
 						.$schedule_date.
@@ -56,7 +56,7 @@ class Controller {
 						.json_encode([ 'instructors' => $instructors]).
 						"','"
 						.json_encode([ 'purpose' => $purposes])
-						."') class=\"w3-button w3-red w3-small\">EDIT SCHEDULE</button></p>";
+						."','td$test_counter$schedule_date') class=\"w3-button w3-red w3-small\">EDIT SCHEDULE</button>";
 					//echo "<p><button onclick=\"document.getElementById('id01').style.display='block'\" class=\"w3-button w3-blue w3-small\">EDIT</button></p>";
 				} else if (ctype_digit($sched_value))  {
 					$schedule_detail = $database->getScheduleDetails($sched_value);
@@ -69,7 +69,7 @@ class Controller {
 					echo "<p>" . "CAPT. " . $instructor . "</p>";
 					echo "<p>" . "STUDENT: " . $student . "</p>";
 					echo "<p>" . "PURPOSE: " . $purpose . "</p>";
-					echo "<p><button onclick=openEditModal('" 
+					echo "<button onclick=openEditModal('" 
 						.$aircraft_reg.
 						"','"
 						.$schedule_date.
@@ -83,10 +83,10 @@ class Controller {
 						.json_encode(['instructor_id' => $instructor_id,'instructors' => $instructors]).
 						"','"
 						.json_encode(['purpose_id' => $purpose_id,'purpose' => $purposes])
-						."') class=\"w3-button w3-red w3-small\">EDIT SCHEDULE</button></p>";				
+						."','td$test_counter$schedule_date') class=\"w3-button w3-red w3-small\">EDIT SCHEDULE</button>";				
 				} else if($sched_value =='CANCELLED') {
 					echo "<p>" . $sched_value . "</p>";
-					echo "<p><button onclick=openEditModal('" 
+					echo "<button onclick=openEditModal('" 
 						.$aircraft_reg.
 						"','"
 						.$schedule_date.
@@ -100,15 +100,17 @@ class Controller {
 						.json_encode([ 'instructors' => $instructors]).
 						"','"
 						.json_encode([ 'purpose' => $purposes])
-						."') class=\"w3-button w3-red w3-small\">EDIT SCHEDULE</button></p>";
+						."','td$test_counter$schedule_date') class=\"w3-button w3-red w3-small\">EDIT SCHEDULE</button>";
 				} else {
 					echo "<p>" . $sched_value . "</p>";
 					
 				}
 
 				echo "</td>";
+				$test_counter++;
 			}
 			echo "</tr>";
+			
 		}
 		echo "</table>";
 		echo "</div>";

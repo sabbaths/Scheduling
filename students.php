@@ -1,3 +1,7 @@
+<?php 
+include_once('check_session.php');
+?>
+
 <!DOCTYPE html>
 <html>
 <title>SCHEDULING</title>

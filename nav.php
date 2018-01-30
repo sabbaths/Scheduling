@@ -1,8 +1,7 @@
-<nav class="w3-sidebar w3-bar-block w3-small w3-hide-small w3-center w3-light-grey">
-  <!-- Avatar image in top left corner -->
-  
-  <a href="home.php" class="w3-bar-item w3-button w3-padding-large">
-    <p>HOME</p>
+<div class="w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left w3-light-grey" style="width:150px;" id="mySidebar">
+  <button class="w3-bar-item w3-button w3-large w3-hide-large" onclick="w3_close()">Close &times;</button>
+  <a href="home.php" class="w3-bar-item w3-hover-black w3-button">
+    HOME
   </a>
   <!--
   <a href="#about" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
@@ -13,55 +12,30 @@
     <i class="fa fa-envelope w3-xxlarge"></i>
     <p>CONTACT</p>
   </a> -->
-  <a class="w3-bar-item w3-button w3-hover-red" href='students.php'>
-  	<p>STUDENTS</p>
+  <a class="w3-bar-item w3-button w3-hover-black" href='students.php'>
+    STUDENTS
   </a>
-  <a class="w3-bar-item w3-button w3-hover-red" href='instructors.php'>
-  	<p>INSTRUCTORS</p>
-  	</a>
-  <a class="w3-bar-item w3-button w3-hover-red" href='aircrafts.php'>
-	<p>AIRCRAFTS</p>
-  </a>
-  <a class="w3-bar-item w3-button w3-hover-red" href='slots.php'>
-	<p>SLOTS</p>
-  </a>
-  <a class="w3-bar-item w3-button w3-hover-red" href='requests.php'>
-  <p>MANAGE REQUESTS</p>
-  </a>
-  <a class="w3-bar-item w3-button w3-hover-red" href='users.php'>
-  <p>MANAGE USERS</p>
-  </a>
-  <a class="w3-bar-item w3-button w3-hover-red" href='index.php'>
-  	<p></p>
-	<p>LOGOUT</p>
-  </a>
-
-</nav>
-
-<nav class="w3-bar-block w3-small w3-hide-large w3-hide-medium w3-red w3-mobile">
-  <a class='w3-bar-item w3-button w3-small ' href='home.php'>
-    <p>EDIT SCHEDULE</p>
-  </a>
-  <a class='w3-bar-item w3-button ' href='students.php'>
-    <p>STUDENTS</p>
-  </a>
-  <a class='w3-bar-item w3-button ' href='instructors.php'>
-    <p>INSTRUCTORS</p>
+  <a class="w3-bar-item w3-button w3-hover-black" href='instructors.php'>
+    INSTRUCTORS
     </a>
-  <a class='w3-bar-item w3-button ' href='aircrafts.php'>
-  <p>AIRCRAFTS</p>
+  <a class="w3-bar-item w3-button w3-hover-black" href='aircrafts.php'>
+  AIRCRAFTS
   </a>
-  <a class='w3-bar-item w3-button ' href='slots.php'>
-  <p>SLOTS</p>
+  <a class="w3-bar-item w3-button w3-hover-black" href='slots.php'>
+  SLOTS
   </a>
-  <a class='w3-bar-item w3-button ' href='requests.php'>
-  <p>MANAGE REQUESTS</p>
+  <a class="w3-bar-item w3-button w3-hover-black" href='requests.php'>
+  MANAGE REQUESTS
   </a>
-  <a class='w3-bar-item w3-button ' href='users.php'>
-  <p>MANAGE USERS</p>
+  <a class="w3-bar-item w3-button w3-hover-black" href='users.php'>
+  MANAGE USERS
   </a>
-  <a class='w3-bar-item w3-button ' href='index.php'>
-    <p></p>
-  <p>LOGOUT</p>
+  <a class="w3-bar-item w3-button w3-hover-black" href='logout.php'>
+  LOGOUT
   </a>
-</nav>  
+</div>
+
+<div class="w3-main" >
+<div class="w3-light-grey">
+  <button class="w3-button w3-grey w3-xlarge w3-hide-large" onclick="w3_open()">&#9776;</button>
+</div>

@@ -49,7 +49,7 @@ class Database {
                 FROM schedule_test st
                 RIGHT JOIN slots s ON st.slot = s.slot_id 
                     AND st.date = '" . $schedule_date . "' WHERE s.active = 1 ORDER BY s.slot_id ";
-
+        
         $sql_get_not_active_ac = "
             SELECT registration
             FROM aircraft
