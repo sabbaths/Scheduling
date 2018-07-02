@@ -3,6 +3,9 @@
   <a href="home.php" class="w3-bar-item w3-hover-black w3-button">
     HOME
   </a>
+  <a href="ground_schedule.php" class="w3-bar-item w3-hover-black w3-button">
+    GROUND SCHEDULE
+  </a>
   <!--
   <a href="#about" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
     <i class="fa fa-user w3-xxlarge"></i>

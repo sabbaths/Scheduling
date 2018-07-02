@@ -407,6 +407,11 @@ class Controller {
 		echo "</header>";
 	}
 
+	function generateGroundScheduleTable() {
+		$database = new Database();
+		$database->connectDB();
+	}
+
 }
 
 ?>

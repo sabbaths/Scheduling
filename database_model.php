@@ -1,32 +1,36 @@
 <?php
 
 class Database {
-    
+
+    private static $environment = 1; //1 for dev, 2 for 000webhostapp
     public static $connection;
-    private static $servername = "127.0.0.1";
-    private static $username = "root"; //apgiaa godaddy.com
-    private static $password = "password";
-    private static $database = "wcc_scheduling"; //apgiaa godaddy.com
-    
-    /*
-    public static $connection;
-    private static $servername = "localhost";
-    private static $username = "id2432317_sabbathsco"; //apgiaa godaddy.com
-    private static $password = "ac2am9jlqwxl0";
-    private static $database = "id2432317_sabbathsco"; *///apgiaa 
-    //put your code here
+    private static $servername = "";
+    private static $username = "";
+    private static $password = "";
+    private static $database = "";
 
     function setEnvironment($environment = 1) {
-        if($environment == 1) { //dev
-            self::$username == "";
-        } else if ($environment == 2) { //prod
+        try {
+            if(self::$environment == 1) { //dev
+                self::$servername = "127.0.0.1";
+                self::$username = "root"; //apgiaa godaddy.com
+                self::$password = "password";
+                self::$database = "wcc_scheduling"; //apgiaa godaddy.com
+            } else if ($environment == 2) { //prod
+                self::$servername = "localhost";
+                self::$username = "id4641441_sabbaths"; //apgiaa godaddy.com
+                self::$password = "ac2am9jlqwxl0";
+                self::$database = "id4641441_sabbaths"; //apgiaa 
+            } else { //godaddy
 
-        } else { //godaddy
+            }
+        } catch(Exception $e) {
 
         }
     }
     
     function connectDB() {
+        self::setEnvironment();
         $status_code = 900; //901 connected 900 failed
 
         // Create connection

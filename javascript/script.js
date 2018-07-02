@@ -158,6 +158,8 @@ S}
 //schedules table in home.php
 function openEditModal(ac, schedule, slot_id, slot_time, students, instructors, purpose, tabledataid) {
 	document.getElementById('editScheduleModal').style.display='block';
+	document.getElementById('realtxt').value = "";
+	document.getElementById('realtxtstud').value = "";
 	document.getElementById('label_data_id').textContent = tabledataid;
 	document.getElementById('label_data_id').value = tabledataid;
 	document.getElementById('label_date_id').textContent = schedule;
@@ -166,6 +168,7 @@ function openEditModal(ac, schedule, slot_id, slot_time, students, instructors, 
 	document.getElementById('label_aircraft_id').value = ac;
 	document.getElementById('label_slot_id').textContent = slot_time;
 	document.getElementById('label_slot_id').value = slot_id;
+
 	//console.log(tabledataid);
     students_obj = JSON.parse(students);
     instructors_obj = JSON.parse(instructors);
@@ -371,6 +374,7 @@ function addEditAC(mode, id_input, reg, bew, moment, is_active) {
 //add edit of every page
 function openAddEditModal(from_view, mode, data_array = '') {
 	document.getElementById('openAddEditModal').style.display='block';
+	var id_label = document.getElementById('id_label');
 	var first_label = document.getElementById('first_label');
 	var second_label = document.getElementById('second_label');
 	var third_label = document.getElementById('third_label');
@@ -392,6 +396,9 @@ function openAddEditModal(from_view, mode, data_array = '') {
 	third_input.value = "";
 	second_input.disabled = false;
 
+	id_input.style.display = "none";
+	id_label.style.display = "none";
+
 
 	console.log(from_view, mode, data_array);
 	if(from_view == 'ac_table_view') {
@@ -404,7 +411,8 @@ function openAddEditModal(from_view, mode, data_array = '') {
 		if(mode == 'add') {
 			//second_label.hidden = true;
 			//second_input.hidden = true;
-			
+			second_input.value = "Yes";
+			second_input.disabled = true;
 			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('ac_table_view','add')" );
 		} else {
 			second_input.disabled = true;
@@ -422,6 +430,7 @@ function openAddEditModal(from_view, mode, data_array = '') {
 		third_input.visible = false;
 	} else if(from_view == 'students_table_view') {
 		if(mode == 'add') {
+
 			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('students_table_view','add')" );
 		} else {
 			id_input.value = data_array[0];
