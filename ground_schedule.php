@@ -23,32 +23,28 @@ if(isset($_SESSION['username'])) {
 
 <body class="w3-white">
 
-<?php include_once('nav.php'); ?>
+<?php 
+  include_once('nav.php'); 
+  include_once('open_edit_modal.php');
+?>
 
 <div class="w3-padding-large" id="main">
   <!-- Header/Home -->
   <header class="w3-container w3-center w3-white" id="home">
-  	<?php
-      include_once('nav.php');
-      require('database_model.php');
-      require('controller.php');
 
-      $controller = new Controller();
+  <?php //echo "<p><button class=\"w3-button w3-panel w3-large w3-left w3-border \">EDIT</button></p>";   ?>
+	<?php
+    include_once('nav.php');
+    require('database_model.php');
+    require('controller.php');
 
-      $date = new DateTime(date("Y/m/d"));
-      //$controller->generateScheduleTable($date->format('Y-m-d'));
-      for($i = 0; $i<6;$i++) {
-        $date->modify('+1 day');
-        //$controller->generateScheduleTable($date->format('Y-m-d'));	
-      }	
-  	?>
+    $controller = new Controller();
+    $controller->generateGroundScheduleTable();	
+	?>
 
   </header>
 
 <?php
-
-//include_once('edit_schedule_modal.php');
-
 ?>
 
 

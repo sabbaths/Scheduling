@@ -371,6 +371,22 @@ function addEditAC(mode, id_input, reg, bew, moment, is_active) {
 	    }
 	}); 
 }
+
+function addEditGS(mode, id_input, class_a, class_b) {
+	$.ajax({  
+	    type: 'POST',  
+	    url: 'gs_handler.php', 
+	    data: { mode: mode,
+	    		gs_id: id_input,
+	    	 	class_a: class_a,
+	    	 	class_b: class_b,
+	    },
+	    success: function(response) {
+	        console.log(response);
+	        location.reload(); 
+	    }
+	}); 
+}
 //add edit of every page
 function openAddEditModal(from_view, mode, data_array = '') {
 	document.getElementById('openAddEditModal').style.display='block';
@@ -386,16 +402,17 @@ function openAddEditModal(from_view, mode, data_array = '') {
 	first_input.placeholder = "First Name";
 	second_input.placeholder = "Middle Name";
 	third_input.placeholder = "Last Name";
+
 	first_label.textContent = 'First Name';
 	second_label.textContent = 'Middle Name';
 	third_label.textContent = 'Last Name';
+
 	id_input.disabled = true;
 	id_input.value = "";
 	first_input.value = "";
 	second_input.value = "";
 	third_input.value = "";
 	second_input.disabled = false;
-
 	id_input.style.display = "none";
 	id_label.style.display = "none";
 
@@ -451,7 +468,34 @@ function openAddEditModal(from_view, mode, data_array = '') {
 
 			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('instructors_table_view','edit')" );
 		}
-	} /*else {
+	} else if(from_view == 'gs_view') {
+		if(mode == 'add') {
+
+		} else {
+			first_label.textContent = 'Classroom A';
+			second_label.textContent = 'Classroom B';
+			third_label.style.display = 'none';
+
+			$(first_input).replaceWith("<textarea id='first_input' class='w3-input w3-border' style='resize:none' rows='10'></textarea>");
+			$(second_input).replaceWith("<textarea id='second_input' class='w3-input w3-border' style='resize:none' rows='10'></textarea>");
+
+			first_input = document.getElementById('first_input');
+			second_input = document.getElementById('second_input');
+
+			first_input.placeholder = "";
+			second_input.valplaceholderue = "";
+
+			id_input.value = data_array[0];
+			first_input.value = data_array[1] || "";
+			second_input.value = data_array[2] || "";
+			
+			third_input.style.display = 'none';
+			
+			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('gs_view','edit')" );
+		}
+	} 
+
+	/*else {
 		document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('add_instructors_view')" );
 		if(from_view == 'add_students_view') {
 			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('add_students_view', 'add')" );
@@ -469,7 +513,7 @@ function closeAddEditModal(from_view, mode) {
 	var is_active = 1;//document.getElementById('third_input').value;
 
 	//check for null inputs
-	if(first_input == "" || second_input == "" || third_input == "") {
+	if(from_view != 'gs_view' && (first_input == "" || second_input == "" || third_input == "")) {
 		alert("Invalid Fields");
 		return;
 	}
@@ -494,7 +538,15 @@ function closeAddEditModal(from_view, mode) {
 		} else {
 			addEditAC(mode, id_input, first_input, third_input, third_input, is_active);
 		}
-	}
+	} else if(from_view == "gs_view") {
+		if(mode == 'add') {
+			//addEditAC(mode, id_input, first_input, third_input, third_input, is_active);
+		} else {
+			console.log("INPUT ID " +id_input);
+
+			addEditGS(mode, id_input, first_input, second_input);
+		}
+	} 
 
 	//save data to database
 

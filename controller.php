@@ -9,7 +9,7 @@ class Controller {
 		$database->connectDB();
 		$schedules =  $database->getSchedules($schedule_date);
 		$schedules_hdg = $schedules[0];
-		$students =  $database->getStudents();
+		$students =  $database->getStudents(1);
 		$instructors =  $database->getInstructors();
 		$purposes =  $database->getPurpose();
 		
@@ -118,6 +118,60 @@ class Controller {
 		unset($database);
 	}
 
+	function generateGroundScheduleTable($view = "home") {
+		$database = new Database();
+		$database->connectDB();	
+		$gs =  $database->getGroundSchedule();
+
+		//print_r($gs);
+
+		echo "<table class='w3-table-all w3-centered w3-border w3-small'>";
+		echo "<tr class='w3-border'>";
+			echo "<th class='w3-border'>";
+			echo "CLASSROOM A";
+			echo "</th>";
+			echo "<th class='w3-border'>";
+			echo "CLASSROOM B";
+			echo "</th>";
+		echo "</tr>";
+
+		$counter = 1;
+		foreach($gs as $g) {
+			$json_test = htmlentities(json_encode($g));
+			$gs_id = $g[0];
+			$classroom_a = $g[1];
+			$classroom_b = $g[2];
+			
+			echo "<tr id='tr-gs-" .$counter. "' class='w3-border'>";
+			echo "<td id='td-gs-a-" .$counter. "' class='w3-border'>";
+			echo "<textarea class='w3-input' rows='10' style='resize:none' disabled=true>";
+			echo $g[1];
+			echo "</textarea>";
+			echo "</td>";
+			echo "<td id='td-gs-b-" .$counter. "' class='w3-border'>";
+			echo "<textarea class='w3-input' rows='10' style='resize:none' disabled=true>";
+			echo $g[2];
+			echo "</textarea>";
+			echo "</td>";
+			echo "<td class='w3-border'>";
+
+			if($view == 'home')
+			echo "
+				<button onclick=\"openAddEditModal('gs_view', 'edit',$json_test)\">
+									EDIT
+									</button>
+
+			";
+
+
+
+			echo "</td>";
+			echo "</tr>";
+			$counter++;
+		}
+		echo "</table>";
+	}
+
 	function generateIndexScheduleTable($schedule_date) {
 		//remove w3-border
 		echo "<div class='w3-container '><h2>SCHEDULE DATE: " . $schedule_date . "</h2></div>";
@@ -193,7 +247,7 @@ class Controller {
 		echo "<div class='w3-responsive'>";
 		echo "<table id=studentstable class='w3-table-all w3-centered w3-border w3-tiny'>";
 
-		$students =  $database->getStudents();
+		$students =  $database->getStudents(2);
 		echo "<tr class='w3-border'>";
 		echo "<th class='w3-border'>Student ID</th>";
 		echo "<th class='w3-border'>First Name</th>";
@@ -406,12 +460,6 @@ class Controller {
 		echo "</div>";
 		echo "</header>";
 	}
-
-	function generateGroundScheduleTable() {
-		$database = new Database();
-		$database->connectDB();
-	}
-
 }
 
 ?>

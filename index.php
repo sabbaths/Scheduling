@@ -46,7 +46,7 @@ if ($use_sts && isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
 
 <div class="w3-row w3-section">
     <div class="w3-rest">
-      <a href="registration.php">REGISTER</a>
+      <a href="registration.php"></a>
     </div>
 </div>
 
@@ -65,12 +65,23 @@ if ($use_sts && isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
 
       $controller = new Controller();
 
-      $date = new DateTime(date("Y/m/d"));
-      $controller->generateIndexScheduleTable($date->format('Y-m-d'));
-      for($i = 0; $i<6;$i++) {
-        $date->modify('+1 day');
-        $controller->generateIndexScheduleTable($date->format('Y-m-d'));	
-      }	
+      echo "<p><a href='index.php'>FLIGHT SCHEDULE</a> 
+      <p><a href='index.php?table=ground'>GROUND SCHEDULE</a>";
+
+      $table = isset($_REQUEST['table']) ? $_REQUEST['table'] : null;
+
+      if($table == "ground") {
+        $controller->generateGroundScheduleTable("index");
+      } else {
+        $date = new DateTime(date("Y/m/d"));
+        $controller->generateIndexScheduleTable($date->format('Y-m-d'));
+        for($i = 0; $i<6;$i++) {
+          $date->modify('+1 day');
+          $controller->generateIndexScheduleTable($date->format('Y-m-d'));  
+        }         
+      }
+
+
   	?>
 
   </header>

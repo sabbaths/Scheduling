@@ -129,6 +129,24 @@ class Database {
         }
     }
 
+    function gsHandler($mode, $gs_id, $class_a, $class_b) {
+
+        if($mode == 'edit') {
+            $sql_update_aircraft = "
+                UPDATE ground_schedule
+                SET gs_a = '$class_a',
+                    gs_b = '$class_b'
+                WHERE gs_id = $gs_id";
+
+                echo $sql_update_aircraft;
+                if (self::$connection->query($sql_update_aircraft) === TRUE) {
+                    return 11011; //good
+                } else {
+                    return 11022; //bad
+                }             
+        }
+    }
+
     function studentHandler($mode, $id_input, $first_name, $middle_name, $last_name, $is_active) {
 
         if($mode == 'edit') {
@@ -272,9 +290,13 @@ class Database {
         }
     }
 
-    function getStudents() {
+    function getStudents($active = 1) {
         $students_arr = array();
-        $sql = "SELECT student_id, first_name, middle_name, last_name, is_active FROM students;";
+        $sql = "SELECT student_id, first_name, middle_name, last_name, is_active FROM students WHERE is_active = $active ORDER BY last_name";
+        if($active == 2) {
+            $sql = "SELECT student_id, first_name, middle_name, last_name, is_active FROM students ORDER BY last_name";
+        }
+
         $result = self::$connection->query($sql);   
 
         if ($result->num_rows > 0) {
@@ -312,7 +334,7 @@ class Database {
 
     function getInstructors() {
         $students_arr = array();
-        $sql = "SELECT id, first_name, middle_name, last_name,is_active FROM instructors;";
+        $sql = "SELECT id, first_name, middle_name, last_name,is_active FROM instructors ORDER BY last_name;";
         $result = self::$connection->query($sql);   
 
         if ($result->num_rows > 0) {
@@ -519,5 +541,24 @@ class Database {
             echo self::$connection->error;
             return 7004; //error
         }
+    }
+
+    function getGroundSchedule() {
+        $gs_arr = array();
+        $sql = "SELECT * FROM ground_schedule;";
+        $result = self::$connection->query($sql);   
+
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $gs_id = $row["gs_id"];
+                $gs_a = $row["gs_a"];
+                $gs_b = $row["gs_b"];
+                $temp_array = array($gs_id, $gs_a, $gs_b);
+                array_push($gs_arr ,$temp_array);
+            }  
+        }
+        //print_r($courses_arr);
+        
+        return $gs_arr;
     }
 }
