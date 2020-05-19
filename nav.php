@@ -27,11 +27,11 @@
   <a class="w3-bar-item w3-button w3-hover-black" href='slots.php'>
   SLOTS
   </a>
-  <a class="w3-bar-item w3-button w3-hover-black" href='requests.php'>
+  <!--<a class="w3-bar-item w3-button w3-hover-black" href='requests.php'>
   MANAGE REQUESTS
   </a>
   <a class="w3-bar-item w3-button w3-hover-black" href='users.php'>
-  MANAGE USERS
+  MANAGE USERS -->
   </a>
   <a class="w3-bar-item w3-button w3-hover-black" href='logout.php'>
   LOGOUT

@@ -373,6 +373,7 @@ class Controller {
 		echo "</tr>";
 		
 		foreach($slots as $slot) {
+			$json_test = htmlentities(json_encode($slot));
 			echo "<tr>";
 
 			echo "<td class='w3-border'>";
@@ -383,8 +384,8 @@ class Controller {
 			echo "<p>" . $slot[1] . "</p>";
 			echo "</td>";		
 
-			echo "<td>";
-			echo "<p><button onclick=openAddEditModal('edit_slot_view') class=\"w3-button w3-panel w3-blue w3-small w3-center w3-border w3-round-xlarge \">EDIT</button></p>";
+			echo "<td class='w3-border'>";
+			echo "<p><button onclick=openAddEditModal('edit_slot_view','edit',$json_test) class=\"w3-button w3-panel w3-blue w3-small w3-center w3-border w3-round-xlarge \">EDIT</button></p>";
 			echo"</td>";
 
 			echo "<td>";

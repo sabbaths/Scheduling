@@ -3,7 +3,7 @@ session_start();
 
 if(isset($_SESSION['username'])) {
 } else if(isset($_POST['username'])) {
-  $_SESSION['username']= $_POST['username'];
+  $_SESSION['username'] = $_POST['username'];
 } else {
   echo "UNAUTHORIZED";
   exit();

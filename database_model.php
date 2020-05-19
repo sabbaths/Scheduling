@@ -12,15 +12,15 @@ class Database {
     function setEnvironment($environment = 1) {
         try {
             if(self::$environment == 1) { //dev
-                self::$servername = "127.0.0.1";
-                self::$username = "root"; //apgiaa godaddy.com
+                static::$servername = "127.0.0.1";
+                static::$username = "root"; //apgiaa godaddy.com
                 self::$password = "password";
                 self::$database = "wcc_scheduling"; //apgiaa godaddy.com
             } else if ($environment == 2) { //prod
                 self::$servername = "localhost";
-                self::$username = "id4641441_sabbaths"; //apgiaa godaddy.com
+                self::$username = "id2432317_sabbathsco"; //apgiaa godaddy.com
                 self::$password = "ac2am9jlqwxl0";
-                self::$database = "id4641441_sabbaths"; //apgiaa 
+                self::$database = "id2432317_sabbathsco"; //apgiaa 
             } else { //godaddy
 
             }
@@ -209,6 +209,36 @@ class Database {
 
     }
 
+    function slotHandler($mode, $id_input, $slot_id, $slot_time, $is_active) {
+        
+        if($mode == 'edit') {  
+
+            $sql_edit = 
+                        "   UPDATE `slots`
+                            SET
+                            `slot_id` = '$slot_id',
+                            `slot_time` = '$slot_time',
+                            `active` = '$is_active'
+                            WHERE `id` = $id_input;";  
+            echo $sql_edit;
+            if (self::$connection->query($sql_edit) === TRUE) {
+                return 9011;
+            } else {
+                return 9012;
+            }         
+        } else if ($mode == 'add') {
+            $sql_insert = "INSERT INTO slots(slot_time, slot_id) VALUES ('$slot_time', '$slot_id')";
+
+            //echo $sql_insert;
+            if (self::$connection->query($sql_insert) === TRUE) {
+                return 9001;
+            } else {
+                return 9002;
+            }             
+        }
+
+    }
+
     function createEditSchedule($slot_id, $instructor_id, $student_id, $aircrat_id, $date_flight, $purpose_id) {
         $sql_insert_schedule_details = " INSERT INTO schedule_test_ins 
                 (instructor, student, purpose) 
@@ -355,7 +385,7 @@ class Database {
 
     function getSlots() {
         $students_arr = array();
-        $sql = "SELECT * FROM slots;";
+        $sql = "SELECT * FROM slots ORDER BY slot_id;";
         $result = self::$connection->query($sql);   
 
         if ($result->num_rows > 0) {
@@ -363,7 +393,8 @@ class Database {
                 $slot_id = $row["slot_id"];
                 $slot_time = $row["slot_time"];
                 $slot_is_active = $row["active"];
-                $temp_array = array($slot_id, $slot_time, $slot_is_active);
+                $id = $row["id"];
+                $temp_array = array($slot_id, $slot_time, $slot_is_active, $id);
                 array_push($students_arr ,$temp_array);
             }  
         }

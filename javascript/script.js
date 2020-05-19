@@ -372,6 +372,23 @@ function addEditAC(mode, id_input, reg, bew, moment, is_active) {
 	}); 
 }
 
+function addEditSlot(mode, id_input, first, second, third, is_active) {
+	$.ajax({  
+	    type: 'POST',  
+	    url: 'slot_handler.php', 
+	    data: { mode: mode,
+	    		id_input: third,
+	    	 	slot_id: first,
+	    	 	slot_time: second,
+	    		is_active: is_active
+	    },
+	    success: function(response) {
+	        console.log(response);
+	        location.reload(); 
+	    }
+	}); 
+}
+
 function addEditGS(mode, id_input, class_a, class_b) {
 	$.ajax({  
 	    type: 'POST',  
@@ -442,9 +459,34 @@ function openAddEditModal(from_view, mode, data_array = '') {
 			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('ac_table_view','edit')" );
 		}
 	} else if(from_view == 'edit_slot_view') { 
-		first_label.textContent = 'Slot ID';
+		first_label.textContent = 'Slot Number';
 		second_label.textContent = 'Slot Time';
-		third_input.visible = false;
+		third_label.textContent = 'ID';
+		third_label.style.display = "none";
+		third_input.style.display = "none";
+
+
+		if(mode == 'add') {
+
+
+			first_input.placeholder = "";
+			second_input.placeholder = "";
+			third_input.text = "";
+			third_input.value = "0";
+			third_input.disabled = true;			
+
+
+			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('edit_slot_view','add')" );
+		} else {
+			id_input.value = data_array[3];
+			first_input.value = data_array[0]; //slot number
+			second_input.value = data_array[1]; //slot time
+			third_input.value = data_array[3]; //slot id
+			third_input.disabled = true;
+			
+			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('edit_slot_view','edit')" );
+		}
+
 	} else if(from_view == 'students_table_view') {
 		if(mode == 'add') {
 
@@ -546,7 +588,13 @@ function closeAddEditModal(from_view, mode) {
 
 			addEditGS(mode, id_input, first_input, second_input);
 		}
-	} 
+	} else if(from_view == "edit_slot_view") {
+		if(mode == 'add') {
+			addEditSlot(mode, id_input, first_input, second_input, third_input, is_active);
+		} else {
+			addEditSlot(mode, id_input, first_input, second_input, third_input, is_active);
+		}
+	}
 
 	//save data to database
 
