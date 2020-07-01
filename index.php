@@ -17,7 +17,7 @@ if ($use_sts && isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
 
 <!DOCTYPE html>
 <html>
-<title>FLIGHT SCHEDULE</title>
+<title>APG FLIGHT SCHEDULE</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="javascript/jquery.min.js"></script>
@@ -51,7 +51,7 @@ if ($use_sts && isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
   </div>
 
   <button class="w3-button w3-block w3-section w3-grey w3-ripple w3-padding">Login</button>
-
+   <p><a class='w3' href='registration.php'>REGISTER</a></p>
 </form>
 
 

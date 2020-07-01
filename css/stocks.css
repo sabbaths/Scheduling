@@ -1,0 +1,15 @@
+.grid-container {
+	margin: 3%;
+  display: grid;
+  grid-template-columns: 20% 70%;
+  
+  padding: 10px;
+}
+.grid-item-1 {
+  background-color: silver;
+}
+
+.grid-item-2 {
+  background-color: gray;
+  padding: 5%;
+}

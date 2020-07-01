@@ -2,25 +2,25 @@
 
 class Database {
 
-    private static $environment = 1; //1 for dev, 2 for 000webhostapp
+    private static $environment = 1; //1 for dev, 2 godaddy 000webhostapp
     public static $connection;
     private static $servername = "";
     private static $username = "";
     private static $password = "";
     private static $database = "";
 
-    function setEnvironment($environment = 1) {
+    function setEnvironment($environment = 2) {
         try {
             if(self::$environment == 1) { //dev
                 static::$servername = "127.0.0.1";
                 static::$username = "root"; //apgiaa godaddy.com
                 self::$password = "password";
                 self::$database = "wcc_scheduling"; //apgiaa godaddy.com
-            } else if ($environment == 2) { //prod
+            } else if ($environment == 2) { //godaddy
                 self::$servername = "localhost";
-                self::$username = "id2432317_sabbathsco"; //apgiaa godaddy.com
-                self::$password = "ac2am9jlqwxl0";
-                self::$database = "id2432317_sabbathsco"; //apgiaa 
+                self::$username = "sabbaths"; //apgiaa godaddy.com
+                self::$password = "Ac2am9jlqwxl)";
+                self::$database = "scheduling"; //apgiaa 
             } else { //godaddy
 
             }
@@ -68,7 +68,7 @@ class Database {
                 array_push($ac_arr ,$row['registration']);
             }  
         }
-        //print_r($ac_arr);
+        
 
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
@@ -226,6 +226,19 @@ class Database {
             } else {
                 return 9012;
             }         
+        } else if($mode == 'edit_active') {  
+
+            $sql_edit = 
+                        "   UPDATE `slots`
+                            SET
+                            `active` = '$is_active'
+                            WHERE `id` = $id_input;";  
+            echo $sql_edit;
+            if (self::$connection->query($sql_edit) === TRUE) {
+                return 90111;
+            } else {
+                return 90122;
+            }         
         } else if ($mode == 'add') {
             $sql_insert = "INSERT INTO slots(slot_time, slot_id) VALUES ('$slot_time', '$slot_id')";
 
@@ -322,9 +335,9 @@ class Database {
 
     function getStudents($active = 1) {
         $students_arr = array();
-        $sql = "SELECT student_id, first_name, middle_name, last_name, is_active FROM students WHERE is_active = $active ORDER BY last_name";
+        $sql = "SELECT student_id, first_name, middle_name, last_name, is_active FROM students WHERE is_active = $active ORDER BY first_name";
         if($active == 2) {
-            $sql = "SELECT student_id, first_name, middle_name, last_name, is_active FROM students ORDER BY last_name";
+            $sql = "SELECT student_id, first_name, middle_name, last_name, is_active FROM students ORDER BY first_name";
         }
 
         $result = self::$connection->query($sql);   
@@ -364,7 +377,7 @@ class Database {
 
     function getInstructors() {
         $students_arr = array();
-        $sql = "SELECT id, first_name, middle_name, last_name,is_active FROM instructors ORDER BY last_name;";
+        $sql = "SELECT id, first_name, middle_name, last_name,is_active FROM instructors ORDER BY first_name;";
         $result = self::$connection->query($sql);   
 
         if ($result->num_rows > 0) {
@@ -528,7 +541,7 @@ class Database {
     
 
 
-    function register($username, $password, $first_name, $middle_name, $last_name, $email, $phone) {
+    function register($username, $password, $first_name, $middle_name, $last_name, $email, $phone, $user_type) {
         $sql_insert_question = " INSERT INTO users 
                 (username, password, first_name, middle_name, last_name) 
                 VALUES ( 
@@ -540,7 +553,7 @@ class Database {
 
         $sql_check_user = "SELECT * FROM users WHERE username = '$username'";
         $result_check_user = self::$connection->query($sql_check_user); 
-
+ 
         if ($result_check_user->num_rows > 0) { 
             return 5003;
         }

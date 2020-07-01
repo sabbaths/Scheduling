@@ -36,11 +36,17 @@ if(isset($_SESSION['username'])) {
       $controller = new Controller();
 
       $date = new DateTime(date("Y/m/d"));
+      if(1==1) {
+        $controller->generateRequestScheduleTable($date->format('Y-m-d'));
+      } else {
+      
       $controller->generateScheduleTable($date->format('Y-m-d'));
       for($i = 0; $i<6;$i++) {
         $date->modify('+1 day');
-        $controller->generateScheduleTable($date->format('Y-m-d'));	
-      }	
+        $controller->generateScheduleTable($date->format('Y-m-d')); 
+      }        
+      }
+	
   	?>
 
   </header>

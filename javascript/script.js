@@ -102,6 +102,28 @@ $(document).ready(function () {
 		}); 
 	});
 
+	$('.active_slot').change(function () {
+		var input_id =  $(this).attr('id');
+		//console.log(input_id);
+		var is_active = $(this).is(":checked") == true ? 1 : 0;
+
+		console.log(input_id + " " + is_active);
+		
+		//mode 1 = edit;
+		$.ajax({  
+		    type: 'POST',  
+		    url: 'slot_handler.php', 
+		    data: { mode: 'edit_active',
+		    	 	id_input: input_id,
+		    		is_active: is_active
+		    },
+		    success: function(response) {
+		        console.log(response);
+		        location.reload();  
+		    }
+		}); 
+	});	
+
 	$('.active_student').change(function () {
 		var student_details =  JSON.parse($(this).attr('id'));
 		//console.log(input_id);

@@ -1,6 +1,129 @@
 <?php
 
 class Controller {
+	function generateRequestScheduleTable($schedule_date) {
+		echo "<div class='w3-container '><h2>SCHEDULE DATE: " . $schedule_date . "</h2></div>";
+		echo "<header class='w3-container w3-margin-bottom w3-center w3-white' id='home'>";
+
+		$database = new Database();
+		$database->connectDB();
+		$schedules =  $database->getSchedules($schedule_date);
+		$schedules_hdg = $schedules[0];
+		$students =  $database->getStudents(1);
+		$instructors =  $database->getInstructors();
+		$purposes =  $database->getPurpose();
+		//print_r($schedules);
+		echo "<div class='w3-responsive'>";
+		echo "<table id=testtable class='w3-table-all w3-centered w3-border w3-small'>";
+		echo "<tr class='w3-border'>";
+
+		foreach($schedules_hdg as $key => $value) {
+				//print_r($schedules_hdg);
+				echo "<th class='w3-border'>";
+				
+				if($key === "slot_time") {
+					echo "SLOT";
+				} else {
+					//print_r($key);
+					echo $key;
+				}
+				echo "</th>";
+		}
+		echo "</tr>";
+		$test_counter = 1;
+
+		foreach($schedules as $schedule) {
+			//print_r($schedule);
+
+			echo "<tr>";
+			
+			foreach($schedule as $sched_key => $sched_value) {
+				$date_row = $schedule['date'];
+				$slot_time = $schedule['slot_time'];
+				$slot_id = $schedule['slot_id'];
+				$aircraft_reg = $sched_key;
+
+				echo "<td id='td$test_counter$schedule_date' class='w3-border'>";
+
+				if($sched_value == NULL) {
+					echo "<p>None</p>";
+					echo "<button onclick=openEditModal('" 
+						.$aircraft_reg.
+						"','"
+						.$schedule_date.
+						"','"
+						.$slot_id.
+						"','"
+						.$slot_time.
+						"','"
+						.json_encode([ 'students' => $students]).
+						"','"
+						.json_encode([ 'instructors' => $instructors]).
+						"','"
+						.json_encode([ 'purpose' => $purposes])
+						."','td$test_counter$schedule_date') class=\"w3-button w3-red w3-small\">REQUEST SCHEDULE</button>";
+					//echo "<p><button onclick=\"document.getElementById('id01').style.display='block'\" class=\"w3-button w3-blue w3-small\">EDIT</button></p>";
+				} else if (ctype_digit($sched_value) && $sched_key <> 'slot_time')  { 
+					
+					
+					$schedule_detail = $database->getScheduleDetails($sched_value);
+					$instructor = $schedule_detail['instructor'];
+					$student = $schedule_detail['student'];
+					$purpose = $schedule_detail['purpose'];
+					$instructor_id = $schedule_detail['instructor_id'];
+					$student_id = $schedule_detail['student_id'];
+					$purpose_id = $schedule_detail['purpose_id'];
+					echo "<p>" . "CAPT. " . $instructor . "</p>";
+					echo "<p>" . "STUDENT: " . $student . "</p>";
+					echo "<p>" . "PURPOSE: " . $purpose . "</p>";
+					echo "<button onclick=openEditModal('" 
+						.$aircraft_reg.
+						"','"
+						.$schedule_date.
+						"','"
+						.$slot_id.
+						"','"
+						.$slot_time.
+						"','"
+						.json_encode(['student_id' => $student_id,'students' => $students]).
+						"','"
+						.json_encode(['instructor_id' => $instructor_id,'instructors' => $instructors]).
+						"','"
+						.json_encode(['purpose_id' => $purpose_id,'purpose' => $purposes])
+						."','td$test_counter$schedule_date') class=\"w3-button w3-red w3-small\">REQUEST SCHEDULE</button>"; 		
+				} else if($sched_value =='CANCELLED') {
+					echo "<p>" . $sched_value . "</p>";
+					echo "<button onclick=openEditModal('" 
+						.$aircraft_reg.
+						"','"
+						.$schedule_date.
+						"','"
+						.$slot_id.
+						"','"
+						.$slot_time.
+						"','"
+						.json_encode([ 'students' => $students]).
+						"','"
+						.json_encode([ 'instructors' => $instructors]).
+						"','"
+						.json_encode([ 'purpose' => $purposes])
+						."','td$test_counter$schedule_date') class=\"w3-button w3-red w3-small\">REQUEST SCHEDULE</button>";
+				} else {
+					echo "<p>" . $sched_value . "</p>";
+				}
+
+				echo "</td>";
+				$test_counter++;
+			}
+			echo "</tr>";
+			
+		}
+		echo "</table>";
+		echo "</div>";
+		echo "</header>";
+		unset($database);
+	}
+
 	function generateScheduleTable($schedule_date) {
 		echo "<div class='w3-container '><h2>SCHEDULE DATE: " . $schedule_date . "</h2></div>";
 		echo "<header class='w3-container w3-margin-bottom w3-center w3-white' id='home'>";
@@ -12,24 +135,29 @@ class Controller {
 		$students =  $database->getStudents(1);
 		$instructors =  $database->getInstructors();
 		$purposes =  $database->getPurpose();
-		
+		//print_r($schedules);
 		echo "<div class='w3-responsive'>";
 		echo "<table id=testtable class='w3-table-all w3-centered w3-border w3-small'>";
 		echo "<tr class='w3-border'>";
+
 		foreach($schedules_hdg as $key => $value) {
+				//print_r($schedules_hdg);
 				echo "<th class='w3-border'>";
 				
 				if($key === "slot_time") {
 					echo "SLOT";
 				} else {
+					//print_r($key);
 					echo $key;
 				}
 				echo "</th>";
 		}
 		echo "</tr>";
 		$test_counter = 1;
+
 		foreach($schedules as $schedule) {
-				
+			//print_r($schedule);
+
 			echo "<tr>";
 			
 			foreach($schedule as $sched_key => $sched_value) {
@@ -58,7 +186,9 @@ class Controller {
 						.json_encode([ 'purpose' => $purposes])
 						."','td$test_counter$schedule_date') class=\"w3-button w3-red w3-small\">EDIT SCHEDULE</button>";
 					//echo "<p><button onclick=\"document.getElementById('id01').style.display='block'\" class=\"w3-button w3-blue w3-small\">EDIT</button></p>";
-				} else if (ctype_digit($sched_value))  {
+				} else if (ctype_digit($sched_value) && $sched_key <> 'slot_time')  { 
+					
+					
 					$schedule_detail = $database->getScheduleDetails($sched_value);
 					$instructor = $schedule_detail['instructor'];
 					$student = $schedule_detail['student'];
@@ -83,7 +213,7 @@ class Controller {
 						.json_encode(['instructor_id' => $instructor_id,'instructors' => $instructors]).
 						"','"
 						.json_encode(['purpose_id' => $purpose_id,'purpose' => $purposes])
-						."','td$test_counter$schedule_date') class=\"w3-button w3-red w3-small\">EDIT SCHEDULE</button>";				
+						."','td$test_counter$schedule_date') class=\"w3-button w3-red w3-small\">EDIT SCHEDULE</button>"; 		
 				} else if($sched_value =='CANCELLED') {
 					echo "<p>" . $sched_value . "</p>";
 					echo "<button onclick=openEditModal('" 
@@ -103,7 +233,6 @@ class Controller {
 						."','td$test_counter$schedule_date') class=\"w3-button w3-red w3-small\">EDIT SCHEDULE</button>";
 				} else {
 					echo "<p>" . $sched_value . "</p>";
-					
 				}
 
 				echo "</td>";
@@ -214,7 +343,7 @@ class Controller {
 
 				if($sched_value == NULL) {
 					echo "None";
-				} else if (ctype_digit($sched_value))  {
+				} else if (ctype_digit($sched_value) && $sched_key <> 'slot_time')  {
 					$schedule_detail = $database->getScheduleDetails($sched_value);
 					$instructor = $schedule_detail['instructor'];
 					$student = $schedule_detail['student'];
@@ -390,9 +519,9 @@ class Controller {
 
 			echo "<td>";
 			if($slot[2] == 1) {
-				echo "<input id='1' class='active_airact' type = 'checkbox' name='1' CHECKED>";
+				echo "<input id='$slot[0]' class='active_slot' type = 'checkbox' name='1' CHECKED>";
 			} else {
-				echo "<input id='1' class='active_airact' type = 'checkbox' name='1' >";
+				echo "<input id='$slot[0]' class='active_slot' type = 'checkbox' name='1' >";
 			}
 			echo "</td>";
 
