@@ -12,10 +12,10 @@ class Database {
     function setEnvironment($environment = 2) {
         try {
             if(self::$environment == 1) { //dev
-                static::$servername = "127.0.0.1";
+                static::$servername = "localhost";
                 static::$username = "root"; //apgiaa godaddy.com
-                self::$password = "password";
-                self::$database = "wcc_scheduling"; //apgiaa godaddy.com
+                self::$password = "root";
+                self::$database = "localhost"; //apgiaa godaddy.com
             } else if ($environment == 2) { //godaddy
                 self::$servername = "localhost";
                 self::$username = "sabbaths"; //apgiaa godaddy.com
@@ -178,6 +178,100 @@ class Database {
 
     }
 
+    function userHandler($mode, $id_input, $username, $password, $first_name, $middle_name, $last_name, $phone, $email, $is_active, $user_type_id) {
+
+        if($mode == 'edit') {
+
+            $sql_edit = 
+                "   UPDATE `users`
+                    SET
+                    `first_name` = '$first_name',
+                    `middle_name` = '$middle_name',
+                    `last_name` = '$last_name',
+                    `is_active` = 0
+                    WHERE `user_id` = $id_input;";  
+            echo $sql_edit;
+            if (self::$connection->query($sql_edit) === TRUE) {
+                return 8011;
+            } else {
+                return 8012;
+            }
+        } else if ($mode == 'add') {
+            //add validation if username exist
+
+            $sql_insert = "INSERT INTO users(username, password, first_name, middle_name, last_name, user_type) VALUES ('$username', '$password', '$first_name', '$middle_name', '$last_name', 3)";
+
+            //echo $sql_insert;
+            if (self::$connection->query($sql_insert) === TRUE) {
+                return 8001;
+            } else {
+                return 8002;
+            }             
+        } else if($mode == 'edit_user_type') {
+            $sql = "UPDATE users
+                SET 
+                    user_type = ?
+                WHERE
+                    user_id = ? ";
+
+            $stmt = self::$connection->prepare($sql);
+            $stmt->bind_param('ii', $user_type_id, $id_input);
+            $stmt->execute();
+            if($stmt->affected_rows === 0)  {
+                return 9990;
+            } else {
+                return 9991;
+            }
+            $stmt->close();
+        } else if($mode == 'edit_user_active') {
+            $sql_edit = 
+                        "   UPDATE `users`
+                            SET
+                            `first_name` = '$first_name',
+                            `middle_name` = '$middle_name',
+                            `last_name` = '$last_name',
+                            `is_active` = '$is_active'
+                            WHERE `user_id` = $id_input;";  
+
+            if (self::$connection->query($sql_edit) === TRUE) {
+                $table_to_update = "";
+
+                if($user_type_id == 2) {
+                    $table_to_update = "instructors";
+                } else if($user_type_id == 3) {
+                    $table_to_update = "students";
+                } else {
+                    return 7777;
+                }
+
+                $sql_delete = "DELETE FROM $table_to_update WHERE user_id = ?";
+
+                $sql_insert = "INSERT INTO $table_to_update 
+                    SET 
+                        first_name = ?,
+                        middle_name = ?,
+                        last_name = ?,
+                        is_active = 1,
+                        user_id = ?";
+
+                if($is_active) {
+                    $stmt = self::$connection->prepare($sql_insert);
+                    $stmt->bind_param('sssi', $first_name, $middle_name, $last_name, $id_input);
+                    $stmt->execute();
+                } else {
+                    $stmt = self::$connection->prepare($sql_delete);
+                    $stmt->bind_param('i',$id_input);
+                    $stmt->execute();
+                }
+
+                return 7777;
+            } else {
+                return 7778;
+            }
+        }
+
+    }
+
     function instructorHandler($mode, $id_input, $first_name, $middle_name, $last_name, $is_active) {
         
         if($mode == 'edit') {  
@@ -240,6 +334,15 @@ class Database {
                 return 90122;
             }         
         } else if ($mode == 'add') {
+            //check if slot number already exists
+            $sql_check_slot_number = "SELECT * FROM slots WHERE slot_id = $slot_id";
+            $result = self::$connection->query($sql_check_slot_number);
+
+            if($result->num_rows === 1) {
+                return 9003;
+            }
+
+
             $sql_insert = "INSERT INTO slots(slot_time, slot_id) VALUES ('$slot_time', '$slot_id')";
 
             //echo $sql_insert;
@@ -358,6 +461,23 @@ class Database {
         return $students_arr;       
     }
 
+    function getUsers() {
+        try {
+            $users = array();
+            $stmt = self::$connection->prepare("SELECT user_id, username, password, first_name, middle_name, last_name, is_active, user_type FROM users WHERE user_id <> 1");
+            //$stmt->bind_param('s', $genreID);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            while($user = $result->fetch_array()) {
+              $user_details = array($user[0], $user[1], $user[2], $user[3], $user[4], $user[5], $user[6], $user[7]);
+              array_push($users, $user_details);
+            }
+            return $users;
+        } catch (Exception $exc) {
+            return $exc;
+        }
+    }
+
     function getPurpose() {
         $purpose_arr = array();
         $sql = "SELECT * FROM flight_purpose;";
@@ -465,6 +585,7 @@ class Database {
         $user = array();
         
         try {
+
             $sql = "SELECT COUNT(*) as is_account_exists FROM users WHERE username = '" . $username . "' and is_active = 1 ";
             //echo $sql;
             $result = self::$connection->query($sql);
@@ -484,6 +605,34 @@ class Database {
                 $sql = "SELECT count(*) as is_correct_un_pw FROM users WHERE username = '" .
                         $username . "' and password = '" . $password . "' and is_active = 1 ";   
                 $result = self::$connection->query($sql);
+
+                /*
+                if ($result->num_rows == 0) {
+                    return 1002; 
+                }
+
+                while($row = $result->fetch_assoc()) {
+                    $firstRow = $row["is_correct_un_pw"];
+                    if($firstRow == 1) {
+                       $status_code = 1001;
+
+                        $sql = "SELECT *  FROM users WHERE username = '" .
+                            $username . "' and password = '" . $password . "' and is_active = 1 ";   
+                        $result_user = self::$connection->query($sql); 
+
+                        while($row_user = $result_user->fetch_assoc()) {
+                            $user_id = $row_user["user_id"];
+                            $user = $row_user;
+                        }
+                    }
+                } */
+                /*
+                $stmt = self::$connection->prepare("SELECT * FROM users");
+                //$stmt->bind_param('ss', $username, $password);
+                $stmt->execute(); 
+                print_r($meta = $stmt->result_metadata());
+                */
+
 
                 if ($result->num_rows > 0) {
                     $status_code = 1002;
@@ -507,11 +656,12 @@ class Database {
                     $status_code = 1002;
                 }
                 
-            }
+            } 
         } catch (Exception $ex) {
+            //echo "Exception " . $ex;
             return [$status_code, $ex];
-        }
 
+        }
         return [$status_code, $user];
     }
     
@@ -542,28 +692,30 @@ class Database {
 
 
     function register($username, $password, $first_name, $middle_name, $last_name, $email, $phone, $user_type) {
+        
         $sql_insert_question = " INSERT INTO users 
-                (username, password, first_name, middle_name, last_name) 
+                (username, password, first_name, middle_name, user_type, last_name) 
                 VALUES ( 
                 '".$username."', 
                 '".$password."',
                 '".$first_name."',
                 '".$middle_name."',
+                '".$user_type."',
                 '".$last_name."')";
 
         $sql_check_user = "SELECT * FROM users WHERE username = '$username'";
         $result_check_user = self::$connection->query($sql_check_user); 
  
-        if ($result_check_user->num_rows > 0) { 
+        if ($result_check_user->num_rows > 0) {
             return 5003;
         }
-
 
         if (self::$connection->query($sql_insert_question) === TRUE) {
             return 5001; //good
         } else {   
             return 5002; //error
-        }
+        } 
+        
     }
 
     function addStudent($first_name, $middle_name, $last_name, $id = "") {
@@ -604,5 +756,19 @@ class Database {
         //print_r($courses_arr);
         
         return $gs_arr;
+    }
+
+    function getUserTypeID($username) {
+        $sql = "SELECT user_type FROM users WHERE username = '$username'";
+
+        $result = self::$connection->query($sql);   
+        $user_type_id = 0;
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $user_type_id = $row["user_type"];
+            }  
+        }
+        
+        return $user_type_id;
     }
 }

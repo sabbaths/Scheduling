@@ -15,6 +15,7 @@ include_once('check_session.php');
 <?php
 
 include_once('nav.php');
+include_once('open_edit_modal.php');
 
 ?>
     
@@ -22,12 +23,12 @@ include_once('nav.php');
   <header class="w3-container w3-padding-32 w3-center w3-white" id="home">
   		<h2>USERS</h2>
 	  		<?php
-				echo "<p><button onclick=openAddEditModal('ac_table_view','add') class=\"w3-button w3-panel w3-large w3-left w3-border \">ADD USER</button></p>";
+				echo "<p><button onclick=openAddEditModal('users_table_view','add') class=\"w3-button w3-panel w3-large w3-left w3-border \">ADD USER</button></p>";
 
 	  			require('controller.php');
 	  			require('database_model.php');
 	  			$controller = new Controller();
-	  			//$controller->generateStudentsTable();
+	  			$controller->generateUsersTable();
 	  		?>
   </header> 
 </div>

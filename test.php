@@ -1,30 +1,27 @@
-<!DOCTYPE html>
-<html>
-<title>WCC SCHEDULING</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<?php
 
-<style>
+include_once('database_model.php');
+/*
+$username = isset($_REQUEST['username']) ? $_REQUEST['username'] : null;
+$password = isset($_REQUEST['password']) ? $_REQUEST['password'] : null;
+*/
+/*
+$username = 'scheduler';
+$password = 'scheduler';
 
-body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
-.w3-row-padding img {margin-bottom: 12px}
-/* Set the width of the sidebar to 120px */
-.w3-sidebar {width: 120px;background: #222;}
-/* Add a left margin to the "page content" that matches the width of the sidebar (120px) */
-#main {margin-left: 120px}
-/* Remove margins from "page content" on small screens */
-@media only screen and (max-width: 600px) {#main {margin-left: 0}}
-</style>
+$database = new Database();
+$database->connectDB();
 
-<div class="w3-bar-block w3-black">
-  <a href="#" class="w3-bar-item w3-button">Home</a>
-  <a href="#" class="w3-bar-item w3-button">Link 1</a>
-  <a href="#" class="w3-bar-item w3-button">Link 2</a>
-  <a href="#" class="w3-bar-item w3-button">Link 3</a>
-</div>
+$status_code = $database->login($username, $password);
+
+$response_data = [ 'status_code' => $status_code[0]];
+echo $status_code[0];
+*/
+echo "test";
+$database = new Database();
+$database->connectDB();
+$test = $database->getUsers();
+print_r($test[0]);
 
 
-</html>
+?>

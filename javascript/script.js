@@ -1,5 +1,23 @@
 $(document).ready(function () {
 
+	//select_instructor
+	$('.select_user_type_test').change(function(e) {
+		//alert("test");
+		var user_details = $(this).find(":selected").attr("id");
+		var user_type_value = $(this).find(":selected").val();
+		var user_type_value_id = 1;
+
+		if(user_type_value == 'Student') {
+			user_type_value_id = 3;
+		} else if(user_type_value == 'Instructor') {
+			user_type_value_id = 2;
+		}
+
+		console.log("value" + user_details);
+		console.log("value" + user_type_value);
+		addEditUser($(this).find(":selected"),'edit_user_type','','','','','','','','','',user_type_value_id);
+	});
+
 	$('#login_form').submit(function(e) {
 		if(false) { //offline mode
 			form.submit();
@@ -48,8 +66,19 @@ $(document).ready(function () {
 	    var password = $('#password').val();
 	    var email = $('#email').val();
 	    var phone = $('#phone').val();
-		console.log("registration");
+	    var user_type_stud = $('#rdt_btn_stud').is(':checked');
+	    var user_type_fi = $('#rdt_btn_fi').is(':checked');
+	    var user_type_admin = $('#rdt_btn_admin').is(':checked');
 
+		var user_type = 1; //stud
+
+		if(user_type_fi == true) {
+			user_type = 2 //fi
+		} else if(user_type_admin == true){
+			user_type = 3 //admin
+		}
+		console.log("user type" + user_type);
+		
 	    if(first_name.length == 0 || last_name.length == 0) {
     		alert("Null Fields");
 	    } else {
@@ -63,11 +92,13 @@ $(document).ready(function () {
 			    		password: password,
 			    		email: email,
 			    		phone: phone,
+			    		user_type: user_type
 			    },
 			    success: function(response) {
 		        	console.log(response); 
 
 			      if(response == '5001') {
+			      	alert("Registration Successful! Wait for Admin to Accept your request.")
 			        form.submit();
 			      } else if(response == '5002'){
 			        alert("Registration Error");
@@ -135,6 +166,29 @@ $(document).ready(function () {
 			student_details[3], is_active);
 	});
 
+	$('.active_user').change(function () {
+		var user_details =  JSON.parse($(this).attr('id'));
+		//console.log(input_id);
+		var is_active = $(this).is(":checked") == true ? 1 : 0;
+
+		console.log("User Detail: " +user_details + " Active: " + is_active);
+		
+		var user_id = user_details[0];
+		var username = user_details[1];
+		var password = user_details[2];
+		var first_name = user_details[3];
+		var middle_name = user_details[4];
+		var last_name = user_details[5];
+		var phone = user_details[5];
+		var email = user_details[5];
+		var active = user_details[6];
+		var user_type_id = user_details[7];
+		//var username = user_details[7];
+
+		addEditUser(this, 'edit_user_active', user_id, username, password,
+			first_name, middle_name, last_name, phone, email, is_active, user_type_id);
+	});
+
 	$('.active_instructor').change(function () {
 		var inst_details =  JSON.parse($(this).attr('id'));
 		//console.log(input_id);
@@ -146,6 +200,7 @@ $(document).ready(function () {
 			inst_details[3], is_active);
 	});
 });
+
 
 
 function searchSel() 
@@ -356,6 +411,43 @@ function addEditStudent(mode, id, first, middle, last, is_active) {
 	});
 }
 
+function addEditUser(this_obj, mode, id, username, password, first, middle, last, phone, email, is_active, user_type_id) {
+	console.log("add edit user function");
+	var student_details;
+	var user_id = id;
+	var user_type_id;
+	if(mode == 'edit_user_type' || mode == 'edit_user_active') {
+		student_details =  JSON.parse($(this_obj).attr('id'));
+		user_id = student_details[0];
+		user_type_id = user_type_id;//student_details[7];
+	}
+
+	console.log("func addEditUser " + mode + " user id " + user_id + " user type id " + user_type_id);
+	
+	$.ajax({  
+	    type: 'POST',  
+	    url: 'user_handler.php', 
+	    data: { mode: mode,
+	    		user_id: user_id,
+	    		username: username,
+	    		password: password,
+	    	 	first_name: first,
+	    	 	middle_name: middle,
+	    	 	last_name: last,
+	    	 	phone: phone,
+	    	 	email: email,
+	    		is_active: is_active,
+	    		user_type_id: user_type_id
+	    },
+	    success: function(response) {
+	        console.log(response);
+	        //location.reload(); 
+	    }
+	}); 
+}
+
+
+
 function addEditInstructor(mode, id, first, middle, last, is_active) {
 	console.log("add edit instructor");
 	
@@ -405,8 +497,14 @@ function addEditSlot(mode, id_input, first, second, third, is_active) {
 	    		is_active: is_active
 	    },
 	    success: function(response) {
-	        console.log(response);
-	        location.reload(); 
+	    	var json_obj = JSON.parse(response);
+	    	var status_code = json_obj.status_code;
+	        console.log(response + " " + status_code);
+	    	if(status_code == '9003') {
+	    		alert("SLOT NUMBER/ID already exists!");
+	    	} else {
+	    		location.reload(); 
+	    	}
 	    }
 	}); 
 }
@@ -433,9 +531,13 @@ function openAddEditModal(from_view, mode, data_array = '') {
 	var first_label = document.getElementById('first_label');
 	var second_label = document.getElementById('second_label');
 	var third_label = document.getElementById('third_label');
+	var fourth_label = document.getElementById('fourth_label');
+	var fifth_label = document.getElementById('fifth_label');
 	var first_input = document.getElementById('first_input');
 	var second_input = document.getElementById('second_input');
 	var third_input = document.getElementById('third_input');
+	var fourth_input = document.getElementById('fourth_input');
+	var fifth_input = document.getElementById('fifth_input');
 
 	id_input.placeholder = "ID";
 	first_input.placeholder = "First Name";
@@ -458,12 +560,17 @@ function openAddEditModal(from_view, mode, data_array = '') {
 
 	console.log(from_view, mode, data_array);
 	if(from_view == 'ac_table_view') {
-			document.getElementById('first_label').textContent = 'Registration';
-			document.getElementById('second_label').textContent = 'Active';
-			document.getElementById('third_label').textContent = 'Basic Empty Weight';		
-			first_input.placeholder = "Registration";
-			second_input.placeholder = "Active";
-			third_input.placeholder = "Basic Empty Weight";
+		fourth_label.style.display = "none";
+		fifth_label.style.display = "none";
+		fourth_input.style.display = "none";
+		fifth_input.style.display = "none";
+		document.getElementById('first_label').textContent = 'Registration';
+		document.getElementById('second_label').textContent = 'Active';
+		document.getElementById('third_label').textContent = 'Basic Empty Weight';		
+		first_input.placeholder = "Registration";
+		second_input.placeholder = "Active";
+		third_input.placeholder = "Basic Empty Weight";
+
 		if(mode == 'add') {
 			//second_label.hidden = true;
 			//second_input.hidden = true;
@@ -486,6 +593,10 @@ function openAddEditModal(from_view, mode, data_array = '') {
 		third_label.textContent = 'ID';
 		third_label.style.display = "none";
 		third_input.style.display = "none";
+		fourth_label.style.display = "none";
+		fifth_label.style.display = "none";
+		fourth_input.style.display = "none";
+		fifth_input.style.display = "none";
 
 
 		if(mode == 'add') {
@@ -557,7 +668,27 @@ function openAddEditModal(from_view, mode, data_array = '') {
 			
 			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('gs_view','edit')" );
 		}
-	} 
+	} else if(from_view == 'users_table_view') {
+		first_label.textContent = 'Username';
+		second_label.textContent = 'Password';
+		third_label.textContent = 'First Name';
+		fourth_label.textContent = 'Middle Name';
+		fifth_label.textContent = 'Last Name';
+
+		if(mode == 'add') {
+			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('users_table_view','add')" );
+		} else {
+
+			id_input.value = data_array[0];
+			first_input.value = data_array[1];
+			second_input.value = data_array[2];
+			third_input.value = data_array[3];
+			fourth_input.value = data_array[4];
+			fifth_input.value = data_array[5];
+
+			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('users_table_view','edit')" );
+		}
+	}
 
 	/*else {
 		document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('add_instructors_view')" );
@@ -574,6 +705,8 @@ function closeAddEditModal(from_view, mode) {
 	var first_input = document.getElementById('first_input').value;
 	var second_input = document.getElementById('second_input').value;
 	var third_input = document.getElementById('third_input').value;
+	var fourth_input = document.getElementById('fourth_input').value;
+	var fifth_input = document.getElementById('fifth_input').value;
 	var is_active = 1;//document.getElementById('third_input').value;
 
 	//check for null inputs
@@ -616,8 +749,13 @@ function closeAddEditModal(from_view, mode) {
 		} else {
 			addEditSlot(mode, id_input, first_input, second_input, third_input, is_active);
 		}
+	} else if(from_view == "users_table_view") {
+		if(mode == 'add') {
+			addEditUser('', mode, id_input, first_input, second_input, third_input, fourth_input, fifth_input, is_active);
+		} else {
+			addEditUser('', mode, id_input, first_input, second_input, third_input, fourth_input, fifth_input, is_active);
+		}
 	}
-
 	//save data to database
 
 	/* old code add students

@@ -22,6 +22,12 @@
           <label id='third_label'><b>Moment</b></label>
           <input id='third_input' class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Moment" name="psw" required>
 
+          <label id='fourth_label'><b>Moment</b></label>
+          <input id='fourth_input' class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Moment" name="psw" required>
+
+          <label id='fifth_label'><b>Moment</b></label>
+          <input id='fifth_input' class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Moment" name="psw" required>
+
         </div>
 
         <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">

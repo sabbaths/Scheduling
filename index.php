@@ -1,7 +1,7 @@
 <?php
 
 // Use HTTP Strict Transport Security to force client to use secure connections only
-$use_sts = true;
+//$use_sts = true;
 
 // iis sets HTTPS to 'off' for non-SSL requests
 /*
@@ -13,6 +13,13 @@ if ($use_sts && isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
     die();
 }
 */
+/*
+if($_SERVER["HTTPS"] != "on")
+{
+    header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
+    exit();
+} */
+
 ?>
 
 <!DOCTYPE html>
