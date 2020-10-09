@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-<title>Registration</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="javascript/jquery.min.js"></script>
 <script src="javascript/script.js"></script>

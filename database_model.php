@@ -15,7 +15,7 @@ class Database {
                 static::$servername = "localhost";
                 static::$username = "root"; //apgiaa godaddy.com
                 self::$password = "root";
-                self::$database = "localhost"; //apgiaa godaddy.com
+                self::$database = "stocks"; //apgiaa godaddy.com
             } else if ($environment == 2) { //godaddy
                 self::$servername = "localhost";
                 self::$username = "sabbaths"; //apgiaa godaddy.com
@@ -246,6 +246,17 @@ class Database {
 
                 $sql_delete = "DELETE FROM $table_to_update WHERE user_id = ?";
 
+                $sql_update_table = 
+                        "   UPDATE 
+                                $table_to_update
+                            SET
+                                `first_name` = ?,
+                                `middle_name` = ?,
+                                `last_name` = ?,
+                                `is_active` = ?
+                            WHERE 
+                                `user_id` = ? ";  
+
                 $sql_insert = "INSERT INTO $table_to_update 
                     SET 
                         first_name = ?,
@@ -254,13 +265,30 @@ class Database {
                         is_active = 1,
                         user_id = ?";
 
-                if($is_active) {
+                //check if instructor/student already exists
+                $record_exists = false;
+                $sql_check_exists =
+                    "
+                        SELECT * 
+                        FROM $table_to_update 
+                        WHERE user_id = $id_input
+                    ";
+
+                $result_if_exists = self::$connection->query($sql_check_exists);
+                if($result_if_exists->num_rows <> 0) {
+                    $record_exists = true;
+                } 
+
+                echo "RECORD REXISTS" . $record_exists;               
+
+                if($is_active && $record_exists == false) {
+
                     $stmt = self::$connection->prepare($sql_insert);
                     $stmt->bind_param('sssi', $first_name, $middle_name, $last_name, $id_input);
                     $stmt->execute();
                 } else {
-                    $stmt = self::$connection->prepare($sql_delete);
-                    $stmt->bind_param('i',$id_input);
+                    $stmt = self::$connection->prepare($sql_update_table);
+                    $stmt->bind_param('sssii', $first_name, $middle_name, $last_name, $is_active, $id_input);
                     $stmt->execute();
                 }
 
@@ -579,6 +607,48 @@ class Database {
        }
     
     function login($username, $password) {
+        $status_code = 1002;
+        $user_id = 0;
+        $return_array = [];
+
+        $sql = "SELECT user_id FROM users WHERE username = ? AND password = ? AND is_active = 1 ";
+
+        try {
+            $stmt = self::$connection->prepare($sql);
+            $stmt->bind_param('ss', $username, $password);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if($result->num_rows <> 0) {
+                $only_row = $result->fetch_assoc();
+                $status_code = 1001;
+                $user_id = $only_row['user_id'];
+            }
+
+        } catch (Exception $exc) {
+            $status_code = 1013;
+        }
+
+        $return_array = [$status_code, $user_id];
+        return $return_array;
+    }
+
+    public function get_result($Statement) {
+        $RESULT = array();
+        $Statement->store_result();
+        for ( $i = 0; $i < $Statement->num_rows; $i++ ) {
+            $Metadata = $Statement->result_metadata();
+            $PARAMS = array();
+            while ( $Field = $Metadata->fetch_field() ) {
+                $PARAMS[] = &$RESULT[ $i ][ $Field->name ];
+            }
+            call_user_func_array( array( $Statement, 'bind_result' ), $PARAMS );
+            $Statement->fetch();
+        }
+        return $RESULT;
+    }
+
+    function login_old($username, $password) {
         //103 does not exist 102 incorrect pw 101 all good
         $status_code = 1009;
         $is_account_exists = false;

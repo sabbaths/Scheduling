@@ -42,12 +42,16 @@
       SLOTS
       </a>
     ";
+
+    /*
     if($user_type_id == 1)
     echo "
       <a class='w3-bar-item w3-button w3-hover-black' href='test.php'>
       TEST
       </a>
     ";
+
+    */
     if($user_type_id == 1)
     echo "
       <a class='w3-bar-item w3-button w3-hover-black' href='users.php'>

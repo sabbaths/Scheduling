@@ -34,22 +34,28 @@ $(document).ready(function () {
 	          $( "#idnga" ).append( "<h1>DUH!!!</h1>" );
 	          alert("Input Username and Password.");
 	    } else {
+	    	var jsonObjects = [{id:1, name:"amit"}, {id:2, name:"ankit"},{id:3, name:"atin"},{id:1, name:"puneet"}];
+
 			$.ajax({
 			    type: 'POST',  
 			    url: 'login_handler.php', 
-			    data: { username: username,
-			    		password: password
-			    },
+			    dataType: "json",
+			    data: JSON.stringify(jsonObjects),
 			    success: function(response) {
 			        console.log(response);
-			        
+			        form.submit();
+			        /*
 			      if(response == '1001') {
 			        form.submit();
 			      } else if(response == '1002'){
 			        alert("Wrong Username or Password");
 			      } else {
 			      	alert("Account does not exist");
-			      }     
+			      }    */ 
+			    },
+			    error: function(errMsg) {
+			    	console.log("ERROR " + errMsg);
+			    	console.log(errMsg);
 			    }
 			});
 	    } 
@@ -232,6 +238,14 @@ function searchSelStud() {
         output[0].selected = true;
 S}
 
+function showLoading() {
+	document.getElementById("loader").style.visibility = "visible"; 
+}
+
+function hideLoading() {
+	document.getElementById("loader").style.visibility = "hidden"; 
+}
+
 //schedules table in home.php
 function openEditModal(ac, schedule, slot_id, slot_time, students, instructors, purpose, tabledataid) {
 	document.getElementById('editScheduleModal').style.display='block';
@@ -342,6 +356,7 @@ function cancelFlightModal() {
 }
 //close edit schedules
 function closeEditModal() {
+	showLoading();
 	document.getElementById('editScheduleModal').style.display='none';
 	//document.getElementById('openAddEditModal').style.display='none';
 	var selected_instructor = $('#select_instructor').find(":selected").text();
@@ -378,11 +393,13 @@ function closeEditModal() {
 	    success: function(response) {
 	        //location.reload();  
 	        //console.log("append" + data_flight);
+	        
 	        $("#"+data_flight).remove("p", "<p>");
 	        $("#"+data_flight+" > p").remove();
 	        $("#"+data_flight).prepend( "<p>PURPOSE: " + selected_purpose + "</p>");
 	        $("#"+data_flight).prepend( "<p>STUDENT: " + selected_student + "</p>");
 	        $("#"+data_flight).prepend( "<p>CAPT: " + selected_instructor + "</p>");
+	        hideLoading();
 	    },
 	    error: function(response) {
 	    	alert("Error: Contact Developer");
@@ -390,6 +407,15 @@ function closeEditModal() {
 	});
 
 }
+
+function wait(ms)
+{
+    var d = new Date();
+    var d2 = null;
+    do { d2 = new Date(); }
+    while(d2-d < ms);
+}
+
 
 function addEditStudent(mode, id, first, middle, last, is_active) {
 	console.log("add edit student");
@@ -424,6 +450,8 @@ function addEditUser(this_obj, mode, id, username, password, first, middle, last
 
 	console.log("func addEditUser " + mode + " user id " + user_id + " user type id " + user_type_id);
 	
+	showLoading();
+
 	$.ajax({  
 	    type: 'POST',  
 	    url: 'user_handler.php', 
@@ -441,7 +469,7 @@ function addEditUser(this_obj, mode, id, username, password, first, middle, last
 	    },
 	    success: function(response) {
 	        console.log(response);
-	        //location.reload(); 
+	        location.reload(); 
 	    }
 	}); 
 }
@@ -669,11 +697,20 @@ function openAddEditModal(from_view, mode, data_array = '') {
 			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('gs_view','edit')" );
 		}
 	} else if(from_view == 'users_table_view') {
+		console.log("here");
 		first_label.textContent = 'Username';
 		second_label.textContent = 'Password';
+		first_input.placeholder = "Username";
+		second_input.placeholder = "Password";
 		third_label.textContent = 'First Name';
 		fourth_label.textContent = 'Middle Name';
 		fifth_label.textContent = 'Last Name';
+		third_input.placeholder = "First Name";
+		fourth_input.placeholder = "Middle Name";
+		fifth_input.placeholder = "Last Name";
+		fourth_input.required = true;
+		fifth_input.required = true;
+
 
 		if(mode == 'add') {
 			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('users_table_view','add')" );
@@ -710,7 +747,7 @@ function closeAddEditModal(from_view, mode) {
 	var is_active = 1;//document.getElementById('third_input').value;
 
 	//check for null inputs
-	if(from_view != 'gs_view' && (first_input == "" || second_input == "" || third_input == "")) {
+	if(from_view != 'gs_view' && (first_input == "" || second_input == "" || third_input == "" || fourth_input == "" || fifth_input == "")) {
 		alert("Invalid Fields");
 		return;
 	}

@@ -32,7 +32,7 @@ include_once('open_edit_modal.php');
 	  		?>
   </header> 
 </div>
-
+<div id="loader" class="loader"></div> 
 
 </body>
 </html>

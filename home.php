@@ -59,5 +59,6 @@ include_once('edit_schedule_modal.php');
 
 
 </div>
+<div id="loader" class="loader"></div> 
 </body>
 </html>

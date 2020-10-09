@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-<title>W3.CSS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="javascript/jquery.min.js"></script>
 <script src="javascript/script.js"></script>
