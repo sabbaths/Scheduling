@@ -422,7 +422,6 @@ class Controller {
 	function generateUsersTable() {
 		$database = new Database();
 		$database->connectDB();
-
 		echo "<header class='w3-container w3-padding-32 w3-center w3-white' id='home'>";
 		echo "<div class='w3-responsive'>";
 		echo "<table id=studentstable class='w3-table-all w3-centered w3-border w3-tiny'>";

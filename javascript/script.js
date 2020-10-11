@@ -207,10 +207,13 @@ $(document).ready(function () {
 	});
 });
 
+function userSearch() {
+	
+	var user_search = document.getElementById('input_user_search').value;
+	alert('Search ' + user_search);
+}
 
-
-function searchSel() 
-{
+function searchSel() {
       var input = document.getElementById('realtxt').value.toLowerCase();
        
           len = input.length;
@@ -236,7 +239,7 @@ function searchSelStud() {
           }
       if (input == '')
         output[0].selected = true;
-S}
+}
 
 function showLoading() {
 	document.getElementById("loader").style.visibility = "visible"; 
@@ -469,7 +472,19 @@ function addEditUser(this_obj, mode, id, username, password, first, middle, last
 	    },
 	    success: function(response) {
 	        console.log(response);
-	        location.reload(); 
+	        //location.reload(); 
+	        var json_obj = JSON.parse(response);
+	        var status_code = json_obj.status_code;
+	        
+	        if(status_code == 8003) {
+	        	alert('Duplicate Username');
+	        	hideLoading();
+	        } else if (status_code == 8004) {
+	        	alert('Duplicate First and Last Name');
+	        	hideLoading();
+	        } else {
+	        	location.reload();
+	        }
 	    }
 	}); 
 }
@@ -749,6 +764,16 @@ function closeAddEditModal(from_view, mode) {
 	//check for null inputs
 	if(from_view != 'gs_view' && (first_input == "" || second_input == "" || third_input == "" || fourth_input == "" || fifth_input == "")) {
 		alert("Invalid Fields");
+		return;
+	}
+
+	if(from_view != 'users_table_view' && (first_input == "" || second_input == "" || third_input == "" || fourth_input == "" || fifth_input == "")) {
+		alert("Invalid Fields");
+		return;
+	}
+
+	if(from_view != 'users_table_view') {
+		alert("Invalid Characters ', '' '; ");
 		return;
 	}
 

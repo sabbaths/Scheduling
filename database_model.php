@@ -198,6 +198,28 @@ class Database {
             }
         } else if ($mode == 'add') {
             //add validation if username exist
+            $sql_search_duplicate = "
+                SELECT * 
+                FROM users 
+                WHERE username = '$username'";
+
+            $result_if_exists = self::$connection->query($sql_search_duplicate);
+            if($result_if_exists->num_rows <> 0) {
+                return 8003;
+            } 
+
+
+            $sql_search_duplicate_name = "
+                SELECT * 
+                FROM users
+                WHERE first_name =  '$first_name'
+                    AND last_name =  '$last_name'
+            ";
+
+            $result_if_exists = self::$connection->query($sql_search_duplicate_name);
+            if($result_if_exists->num_rows <> 0) {
+                return 8004;
+            } 
 
             $sql_insert = "INSERT INTO users(username, password, first_name, middle_name, last_name, user_type) VALUES ('$username', '$password', '$first_name', '$middle_name', '$last_name', 3)";
 

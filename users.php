@@ -23,7 +23,12 @@ include_once('open_edit_modal.php');
   <header class="w3-container w3-padding-32 w3-center w3-white" id="home">
   		<h2>USERS</h2>
 	  		<?php
-				echo "<p><button onclick=openAddEditModal('users_table_view','add') class=\"w3-button w3-panel w3-large w3-left w3-border \">ADD USER</button></p>";
+				echo "<div class='div_search'><button onclick=openAddEditModal('users_table_view','add') class=\"w3-button w3-panel w3-large w3-left w3-border \">ADD USER</button></div>";
+
+	  			echo "<div class='div_search'><p><input id='input_user_search' type='text' placeholder='Search..'>
+
+	  			<button type='submit' onclick=userSearch()>Submit</button></p></div>
+	  			";
 
 	  			require('controller.php');
 	  			require('database_model.php');
