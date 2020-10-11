@@ -96,5 +96,25 @@ if($_SERVER["HTTPS"] != "on")
 
   </header>
 </div>
+
+<div class="w3-container">
+  <h2>ANNOUNCEMENT</h2>
+
+  <div id="id01" class="w3-modal">
+    <div class="w3-modal-content">
+      <div id='div_announcement_container' class="w3-container">
+        <span onclick="document.getElementById('id01').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+        <h1>ANNOUNCEMENT:</h1>
+        <p>Everyone(Mechanic, Pilot, Student, Admin) needs to submit COVID test result before initial work or training AS PER CAAP REQUIREMENT,even if you just stayed in SUBIC for the whole quarantine. <p>PLEASE DONT ASK AGAIN.</p>
+
+
+
+        <p>-CAPT JAMES - CAPT. JAYLORD</p>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

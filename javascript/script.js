@@ -1,5 +1,7 @@
 $(document).ready(function () {
 
+	document.getElementById('id01').style.display='block'
+
 	//select_instructor
 	$('.select_user_type_test').change(function(e) {
 		//alert("test");
@@ -782,15 +784,7 @@ function closeAddEditModal(from_view, mode) {
 		return;
 	}
 
-	if(from_view != 'users_table_view' && (first_input == "" || second_input == "" || third_input == "" || fourth_input == "" || fifth_input == "")) {
-		alert("Invalid Fields");
-		return;
-	}
-
 	if(from_view == 'users_table_view') {
-		//validate username length
-		//password length
-		//characters
 		if(first_input.length < 7) {
 			alert('Username Length must be 8');
 			return;
@@ -799,9 +793,9 @@ function closeAddEditModal(from_view, mode) {
 			alert('Password Length must be 8');
 			return;
 		}
-		if(!isAlphaNumeric(first_input) || !isAlphaNumeric(second_input) || !isAlphaNumeric(third_input) || !isAlphaNumeric(fourth_input) || !isAlphaNumeric(fifth_input)) {
+		if(!isAlphaNumeric(first_input) || !isAlphaNumeric(third_input) || !isAlphaNumeric(fourth_input) || !isAlphaNumeric(fifth_input)) {
 			alert('LETTERS AND NUMBERS ONLY');
-			return;amanaman
+			return;
 		}
 	}
 
