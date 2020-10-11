@@ -737,6 +737,7 @@ function openAddEditModal(from_view, mode, data_array = '') {
 			third_input.value = data_array[3];
 			fourth_input.value = data_array[4];
 			fifth_input.value = data_array[5];
+			first_input.disabled = true;
 
 			document.getElementById( "btn_save_modal" ).setAttribute( "onClick", "javascript: closeAddEditModal('users_table_view','edit')" );
 		}
@@ -749,6 +750,20 @@ function openAddEditModal(from_view, mode, data_array = '') {
 		}
 	} */
 	
+}
+
+function isAlphaNumeric(str) {
+  var code, i, len;
+
+  for (i = 0, len = str.length; i < len; i++) {
+    code = str.charCodeAt(i);
+    if (!(code > 47 && code < 58) && // numeric (0-9)
+        !(code > 64 && code < 91) && // upper alpha (A-Z)
+        !(code > 96 && code < 123)) { // lower alpha (a-z)
+      return false;
+    }
+  }
+  return true;
 }
 
 function closeAddEditModal(from_view, mode) {
@@ -772,9 +787,22 @@ function closeAddEditModal(from_view, mode) {
 		return;
 	}
 
-	if(from_view != 'users_table_view') {
-		alert("Invalid Characters ', '' '; ");
-		return;
+	if(from_view == 'users_table_view') {
+		//validate username length
+		//password length
+		//characters
+		if(first_input.length < 7) {
+			alert('Username Length must be 8');
+			return;
+		}
+		if(second_input.length < 7) {
+			alert('Password Length must be 8');
+			return;
+		}
+		if(!isAlphaNumeric(first_input) || !isAlphaNumeric(second_input) || !isAlphaNumeric(third_input) || !isAlphaNumeric(fourth_input) || !isAlphaNumeric(fifth_input)) {
+			alert('LETTERS AND NUMBERS ONLY');
+			return;amanaman
+		}
 	}
 
 	if(from_view == "students_table_view") {

@@ -185,12 +185,13 @@ class Database {
             $sql_edit = 
                 "   UPDATE `users`
                     SET
+                    `password` = '$password',
                     `first_name` = '$first_name',
                     `middle_name` = '$middle_name',
                     `last_name` = '$last_name',
                     `is_active` = 0
                     WHERE `user_id` = $id_input;";  
-            echo $sql_edit;
+
             if (self::$connection->query($sql_edit) === TRUE) {
                 return 8011;
             } else {
