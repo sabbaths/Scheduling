@@ -419,14 +419,14 @@ class Controller {
 		echo "</header>";
 	}
 
-	function generateUsersTable() {
+	function generateUsersTable($search_name) {
 		$database = new Database();
 		$database->connectDB();
 		echo "<header class='w3-container w3-padding-32 w3-center w3-white' id='home'>";
 		echo "<div class='w3-responsive'>";
 		echo "<table id=studentstable class='w3-table-all w3-centered w3-border w3-tiny'>";
 
-		$students =  $database->getUsers();
+		$students =  $database->getUsers($search_name);
 		
 		echo "<tr class='w3-border'>";
 		echo "<th class='w3-border'>User ID</th>";

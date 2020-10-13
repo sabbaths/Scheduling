@@ -63,9 +63,12 @@
     background-color: white;
     color: black;
     height: 500px;
-    font-weight: bold;
     font-family: "Verdana";
     font-size: 25px;
+}
+
+#div_announcement_container > h1, h2, h3,h4, h5, h6{
+    font-weight: bold;
 }
 
 body, h1,h2,h3,h4,h5,h6 {font-family: Verdana, Arial, Georgia};

@@ -12,10 +12,13 @@ include_once('check_session.php');
 <link rel="stylesheet" href="css/w3.css">
 <link rel="stylesheet" href="css/user.css">
 <body class="w3-white">
+
 <?php
 
-include_once('nav.php');
-include_once('open_edit_modal.php');
+	include_once('nav.php');
+	include_once('open_edit_modal.php');
+
+	$search_name = isset($_GET['search']) ? $_GET['search'] : "" ;
 
 ?>
     
@@ -25,7 +28,7 @@ include_once('open_edit_modal.php');
 	  		<?php
 				echo "<div class='div_search'><button onclick=openAddEditModal('users_table_view','add') class=\"w3-button w3-panel w3-large w3-left w3-border \">ADD USER</button></div>";
 
-	  			echo "<div class='div_search'><p><input id='input_user_search' type='text' placeholder='Search..'>
+	  			echo "<div class='div_search'><p><input id='input_user_search' type='text' size=100 placeholder='Search User..'>
 
 	  			<button type='submit' onclick=userSearch()>Submit</button></p></div>
 	  			";
@@ -33,7 +36,7 @@ include_once('open_edit_modal.php');
 	  			require('controller.php');
 	  			require('database_model.php');
 	  			$controller = new Controller();
-	  			$controller->generateUsersTable();
+	  			$controller->generateUsersTable($search_name);
 	  		?>
   </header> 
 </div>

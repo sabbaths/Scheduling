@@ -210,9 +210,10 @@ $(document).ready(function () {
 });
 
 function userSearch() {
-	
+	showLoading();
 	var user_search = document.getElementById('input_user_search').value;
-	alert('Search ' + user_search);
+
+	window.location.href = window.location.href.replace( /[\?#].*|$/, "?search="+user_search );
 }
 
 function searchSel() {
@@ -779,7 +780,7 @@ function closeAddEditModal(from_view, mode) {
 	var is_active = 1;//document.getElementById('third_input').value;
 
 	//check for null inputs
-	if(from_view != 'gs_view' && (first_input == "" || second_input == "" || third_input == "" || fourth_input == "" || fifth_input == "")) {
+	if(from_view != 'gs_view' && from_view != 'edit_slot_view'  && (first_input == "" || second_input == "" || third_input == "" || fourth_input == "" || fifth_input == "")) {
 		alert("Invalid Fields");
 		return;
 	}

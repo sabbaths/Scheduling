@@ -512,10 +512,16 @@ class Database {
         return $students_arr;       
     }
 
-    function getUsers() {
+    function getUsers($search_name) {
         try {
             $users = array();
             $stmt = self::$connection->prepare("SELECT user_id, username, password, first_name, middle_name, last_name, is_active, user_type FROM users WHERE user_id <> 1");
+
+            if($search_name <> "")
+                $stmt = self::$connection->prepare("SELECT user_id, username, password, first_name, middle_name, last_name, is_active, user_type FROM users WHERE user_id <> 1
+                    AND (first_name LIKE '$search_name' OR last_name LIKE '$search_name')");
+
+
             //$stmt->bind_param('s', $genreID);
             $stmt->execute();
             $result = $stmt->get_result();
