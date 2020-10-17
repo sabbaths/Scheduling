@@ -53,7 +53,7 @@ class Database {
                 FROM schedule_test st
                 RIGHT JOIN slots s ON st.slot = s.slot_id 
                     AND st.date = '" . $schedule_date . "' WHERE s.active = 1 ORDER BY s.slot_id ";
-        
+        //echo $sql;
         $sql_get_not_active_ac = "
             SELECT registration
             FROM aircraft
@@ -300,9 +300,7 @@ class Database {
                 $result_if_exists = self::$connection->query($sql_check_exists);
                 if($result_if_exists->num_rows <> 0) {
                     $record_exists = true;
-                } 
-
-                echo "RECORD REXISTS" . $record_exists;               
+                }                
 
                 if($is_active && $record_exists == false) {
 
@@ -518,8 +516,11 @@ class Database {
             $stmt = self::$connection->prepare("SELECT user_id, username, password, first_name, middle_name, last_name, is_active, user_type FROM users WHERE user_id <> 1");
 
             if($search_name <> "")
-                $stmt = self::$connection->prepare("SELECT user_id, username, password, first_name, middle_name, last_name, is_active, user_type FROM users WHERE user_id <> 1
-                    AND (first_name LIKE '$search_name' OR last_name LIKE '$search_name')");
+                $stmt = self::$connection->prepare("
+                    SELECT user_id, username, password, first_name, middle_name, last_name, is_active, user_type 
+                    FROM users 
+                    WHERE user_id <> 1
+                        AND (username LIKE '$search_name%' OR first_name LIKE '$search_name%' OR last_name LIKE '$search_name%')");
 
 
             //$stmt->bind_param('s', $genreID);

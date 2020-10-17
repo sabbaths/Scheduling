@@ -17,6 +17,8 @@ if(isset($_SESSION['username'])) {
   $controller = new Controller();
   $_SESSION['user_type_id'] = $controller->getUserTypeID($_SESSION['username']);
   include_once('nav.php');
+  $user_type_id = $_SESSION['user_type_id'];
+  echo "USER TYPE " . $user_type_id;
 ?>
 
 <!DOCTYPE html>
@@ -37,9 +39,9 @@ if(isset($_SESSION['username'])) {
   	<?php
 
       $date = new DateTime(date("Y/m/d"));
-      if(1<>1) {
+      if($user_type_id<>1) {
         $controller->generateRequestScheduleTable($date->format('Y-m-d'));
-      } else {
+      } else if($user_type_id == 1) {
         $controller->generateScheduleTable($date->format('Y-m-d'));
         for($i = 0; $i<6;$i++) {
           $date->modify('+1 day');

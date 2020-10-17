@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-	document.getElementById('id01').style.display='block'
+	//document.getElementById('id01').style.display='block'
 
 	//select_instructor
 	$('.select_user_type_test').change(function(e) {
@@ -21,10 +21,10 @@ $(document).ready(function () {
 	});
 
 	$('#login_form').submit(function(e) {
+		showLoading();
 		if(false) { //offline mode
 			form.submit();
 		}
-
 	    var form = this;
 	    e.preventDefault();
 	    
@@ -36,27 +36,29 @@ $(document).ready(function () {
 	          $( "#idnga" ).append( "<h1>DUH!!!</h1>" );
 	          alert("Input Username and Password.");
 	    } else {
-	    	var jsonObjects = [{id:1, name:"amit"}, {id:2, name:"ankit"},{id:3, name:"atin"},{id:1, name:"puneet"}];
+		    var data = {"username":username, "password":password};
+		     
+	    	
+			var data = {"username":username, "password":password};
 
 			$.ajax({
 			    type: 'POST',  
 			    url: 'login_handler.php', 
 			    dataType: "json",
-			    data: JSON.stringify(jsonObjects),
+			    contentType: "application/json",
+			    data: JSON.stringify(data), 
 			    success: function(response) {
-			        console.log(response);
-			        form.submit();
-			        /*
+			    	console.log(response)
 			      if(response == '1001') {
 			        form.submit();
 			      } else if(response == '1002'){
 			        alert("Wrong Username or Password");
 			      } else {
 			      	alert("Account does not exist");
-			      }    */ 
+			      }    
 			    },
 			    error: function(errMsg) {
-			    	console.log("ERROR " + errMsg);
+			    	console.log("ERROR JAVASCRIPT");
 			    	console.log(errMsg);
 			    }
 			});
@@ -208,6 +210,8 @@ $(document).ready(function () {
 			inst_details[3], is_active);
 	});
 });
+
+
 
 function userSearch() {
 	showLoading();
