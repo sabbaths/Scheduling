@@ -96,7 +96,7 @@ if($_SERVER["HTTPS"] != "on")
 
   </header>
 </div>
-
+<div id="loader" class="loader"></div> 
 <div class="w3-container">
   <h2>ANNOUNCEMENT</h2>
 

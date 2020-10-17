@@ -21,13 +21,13 @@ $(document).ready(function () {
 	});
 
 	$('#login_form').submit(function(e) {
-
+		showLoading();
 		if(false) { //offline mode
 			form.submit();
 		}
 	    var form = this;
 	    e.preventDefault();
-	    showLoading();
+	    
 	    var username = $('#username').val();
 	    var password = $('#password').val();
 
@@ -63,7 +63,7 @@ $(document).ready(function () {
 			    }
 			});
 	    } 
-	    hideLoading();
+
 	});
 
 	$('#registration_form').submit(function(e) {
