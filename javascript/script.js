@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-	//document.getElementById('id01').style.display='block'
+	
 
 	//select_instructor
 	$('.select_user_type_test').change(function(e) {
@@ -209,6 +209,9 @@ $(document).ready(function () {
 		addEditInstructor('edit', inst_details[0],inst_details[1],inst_details[2],
 			inst_details[3], is_active);
 	});
+
+	document.getElementById('div_annoucement').style.display='block';
+
 });
 
 
@@ -276,34 +279,54 @@ function openEditModal(ac, schedule, slot_id, slot_time, students, instructors, 
     purpose_obj = JSON.parse(purpose);
 
     //INSTRUCTORS
+    console.log("INSTRUCTORS OBJ");
+    console.log(instructors_obj);
 	var instructor_list = instructors_obj.instructors;
+	var instructor_id = instructors_obj.instructor_id;
 	var select_instructor = document.getElementById('select_instructor');
+	var counter_selected_index_instructor = 0;
 	while (select_instructor.firstChild) {
     	select_instructor.removeChild(select_instructor.firstChild);
 	}
-	for (var i = 0; i<instructor_list.length; i++){
+	for (var i = 0; i<instructor_list.length; i++) {
 	    var opt = document.createElement('option');
-	    opt.value = instructor_list[i][0];;
+	    var inst_id =  instructor_list[i][0];
+	    opt.value = instructor_list[i][0];
 	    opt.innerHTML = instructor_list[i][1] + " " + instructor_list[i][2] + " " + instructor_list[i][3];
 	    select_instructor.appendChild(opt);
-	}
-	select_instructor.selectedIndex = instructors_obj.instructor_id - 1;
 
+	    if(instructor_id == inst_id) {
+	    	counter_selected_index_instructor = i;
+	    }
+	}
+	select_instructor.selectedIndex = counter_selected_index_instructor;
+	console.log("SELECTED INSRUCTOR:" + select_instructor.selectedIndex + " " + instructors_obj.instructor_id);
 	//STUDENTS
+	console.log("STUDENTS OBJ");
+    console.log(students_obj);
 	var student_list = students_obj.students;
+	var student_id = students_obj.student_id;
 	var select_student = document.getElementById('select_student');
+	var counter_selected_index_student = 0;
 	while (select_student.firstChild) {
     	select_student.removeChild(select_student.firstChild);
 	}
 	for (var x = 0; x<student_list.length; x++){
 	    var opt = document.createElement('option');
-	    opt.value = student_list[x][0];;
+	    console.count("student:");
+	    console.log(student_list[x]);
+	    var stud_id =  student_list[x][0];
+	    opt.value = student_list[x][0];
 	    opt.innerHTML = student_list[x][1] + " " + student_list[x][2] + " " + student_list[x][3];
 	    select_student.appendChild(opt);
+
+	    if(student_id == stud_id) {
+	    	counter_selected_index_student = x;
+	    }
 	}
 
-	select_student.selectedIndex = students_obj.student_id - 1;
-	console.log("SELECTED STUD:" + select_student.selectedIndex + " " + students_obj.student_id);
+	select_student.selectedIndex = counter_selected_index_student;
+	console.log("SELECTED STUD:" + select_student.selectedIndex + " " + students_obj.student_id + " COUNTER STUD" + counter_selected_index_student);
 	
 	//PURPOSE DROPDOWN
 	var purpose_list = purpose_obj.purpose;

@@ -98,20 +98,17 @@ if($_SERVER["HTTPS"] != "on")
 </div>
 <div id="loader" class="loader"></div> 
 <div class="w3-container">
-  <h2>ANNOUNCEMENT</h2>
-
-  <div id="id01" class="w3-modal">
+  <div id="div_annoucement" class="w3-modal">
     <div class="w3-modal-content">
       <div id='div_announcement_container' class="w3-container">
-        <span onclick="document.getElementById('id01').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+        <span onclick="document.getElementById('div_annoucement').style.display='none'" class="w3-button w3-display-topright">&times;</span>
         <h1>ANNOUNCEMENT:</h1>
-        <p>Everyone(Mechanic, Pilot, Student, Admin) needs to submit COVID test result before initial work or training AS PER CAAP REQUIREMENT,even if you just stayed in SUBIC for the whole quarantine. <p>PLEASE DONT ASK AGAIN.</p>
-
-
+        <p>Everyone(Mechanic, Pilot, Student, Admin) needs to submit COVID test result before initial work or training AS PER CAAP REQUIREMENT.
 
         <p>-CAPT JAMES - CAPT. JAYLORD</p>
 
         <h1>AIRPORT OPERATIONS 0700-1700</h1>
+        <h1>"DEADLINE FOR CHECKING OF FLIGHT SCHEDULE 2100H EVERYNIGHT"</h1>
         </p>
       </div>
     </div>
