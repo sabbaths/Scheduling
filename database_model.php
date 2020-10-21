@@ -21,11 +21,11 @@ class Database {
                 self::$username = "sabbaths"; //apgiaa godaddy.com
                 self::$password = "Ac2am9jlqwxl)";
                 self::$database = "scheduling"; //apgiaa 
-            } else { //heroku
+            } else if (self::$environment == 3) { //heroku
                 self::$servername = "us-cdbr-east-02.cleardb.com";
                 self::$username = "bcc35f095e072b"; 
                 self::$password = "66fe0a01";
-                self::$database = "heroku_a50ca651fcd79c1"; //apgiaa  
+                self::$database = "heroku_a50ca651fcd79c1"; //apgiaa 
             }
         } catch(Exception $e) {
 
