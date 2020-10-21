@@ -9,7 +9,7 @@ class Database {
     private static $password = "";
     private static $database = "";
 
-    private function setEnvironment($environment = 2) {
+    private function setEnvironment() {
         try {
             if(self::$environment == 1) { //dev
                 static::$servername = "localhost";
