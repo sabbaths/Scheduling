@@ -16,7 +16,7 @@ class Database {
                 static::$username = "root"; //apgiaa godaddy.com
                 self::$password = "root";
                 self::$database = "stocks"; //apgiaa godaddy.com
-            } else if ($environment == 2) { //godaddy
+            } else if (self::$environment == 2) { //godaddy
                 self::$servername = "localhost";
                 self::$username = "sabbaths"; //apgiaa godaddy.com
                 self::$password = "Ac2am9jlqwxl)";
