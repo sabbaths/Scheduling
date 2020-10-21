@@ -2,7 +2,7 @@
 
 class Database {
 
-    private static $environment = 2; //1 for dev, 2 godaddy 000webhostapp
+    private static $environment = 3; //1 for dev, 2 godaddy 000webhostapp
     public static $connection;
     private static $servername = "";
     private static $username = "";
@@ -21,8 +21,11 @@ class Database {
                 self::$username = "sabbaths"; //apgiaa godaddy.com
                 self::$password = "Ac2am9jlqwxl)";
                 self::$database = "scheduling"; //apgiaa 
-            } else { //godaddy
-
+            } else { //heroku
+                self::$servername = "us-cdbr-east-02.cleardb.com";
+                self::$username = "bcc35f095e072b"; 
+                self::$password = "66fe0a01";
+                self::$database = "heroku_a50ca651fcd79c1"; //apgiaa  
             }
         } catch(Exception $e) {
 
