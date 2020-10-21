@@ -2,14 +2,14 @@
 
 class Database {
 
-    private static $environment = 1; //1 for dev, 2 godaddy 000webhostapp
+    private static $environment = 2; //1 for dev, 2 godaddy 000webhostapp
     public static $connection;
     private static $servername = "";
     private static $username = "";
     private static $password = "";
     private static $database = "";
 
-    function setEnvironment($environment = 2) {
+    private function setEnvironment($environment = 2) {
         try {
             if(self::$environment == 1) { //dev
                 static::$servername = "localhost";
@@ -29,7 +29,7 @@ class Database {
         }
     }
     
-    function connectDB() {
+    public function connectDB() {
         self::setEnvironment();
         $status_code = 900; //901 connected 900 failed
 
@@ -45,7 +45,7 @@ class Database {
         return $status_code;
     }
 
-    function getSchedules($schedule_date) {
+    public function getSchedules($schedule_date) {
         $schedule_date_arr = array();
         $ac_arr = array();
 
@@ -86,7 +86,7 @@ class Database {
         return $schedule_date_arr;       
     }
 
-    function aircraftHandler($mode, $aircraft_id, $registration, $bew, $moment, $is_active) {
+    public function aircraftHandler($mode, $aircraft_id, $registration, $bew, $moment, $is_active) {
 
         if($mode == 'edit') {
             $sql_update_aircraft = "

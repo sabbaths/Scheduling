@@ -59,6 +59,13 @@
       </a>
     ";
 
+    if($user_type_id == 1)
+    echo "
+      <a class='w3-bar-item w3-button w3-hover-black' href='announcement.php'>
+      ANNOUNCEMENT
+      </a>
+    ";
+
     echo "
       <!--<a class='w3-bar-item w3-button w3-hover-black' href='requests.php'>
       MANAGE REQUESTS
